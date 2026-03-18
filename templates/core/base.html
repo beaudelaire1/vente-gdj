@@ -1,0 +1,74 @@
+{% load static %}{% load order_tags %}<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Vente GDJ EEBC{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+    <script src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}" x-data="{ sidebarOpen: false }">
+
+{% if user.is_authenticated %}
+<!-- Navigation -->
+<nav class="navbar" x-data="{ menuOpen: false }">
+    <div class="navbar-inner">
+        <a href="/" class="navbar-brand">
+            <span class="brand-accent">Vente</span> GDJ EEBC
+        </a>
+
+        <button class="navbar-toggle" @click="menuOpen = !menuOpen" aria-label="Menu">
+            <span class="toggle-bar" :class="menuOpen && 'open'"></span>
+        </button>
+
+        <div class="navbar-links" :class="menuOpen && 'show'">
+            {% if user.is_superuser or user.profile.role == 'admin' %}
+            <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                Tableau de bord
+            </a>
+            {% endif %}
+            {% if user.is_superuser or user.profile.role == 'admin' or user.profile.role == 'caisse' %}
+            <a href="{% url 'caisse' %}" class="nav-link {% if 'caisse' in request.resolver_match.url_name %}active{% endif %}">
+                Caisse
+            </a>
+            {% endif %}
+            {% if user.is_superuser or user.profile.role == 'admin' or user.profile.role == 'preparation' %}
+            <a href="{% url 'preparation' %}" class="nav-link {% if 'preparation' in request.resolver_match.url_name %}active{% endif %}">
+                Préparation
+            </a>
+            {% endif %}
+            <div class="nav-spacer"></div>
+            <span class="nav-user">{{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="nav-link nav-link-logout">Déconnexion</a>
+        </div>
+    </div>
+</nav>
+{% endif %}
+
+<!-- Messages -->
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+    <div class="message message-{{ message.tags }}" x-data="{ show: true }" x-show="show"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        {{ message }}
+        <button @click="show = false" class="message-close">&times;</button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Content -->
+<main class="main-content {% block main_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+</main>
+
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

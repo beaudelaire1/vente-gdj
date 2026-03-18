@@ -1,0 +1,58 @@
+{% extends "core/base.html" %}
+{% load order_tags %}
+
+{% block title %}Caisse — Vente GDJ EEBC{% endblock %}
+{% block body_class %}page-caisse{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-inner">
+        <div>
+            <h1 class="page-title">Caisse</h1>
+            {% if event %}
+            <p class="page-subtitle">{{ event.name }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if not event %}
+<div class="empty-state">
+    <p class="empty-state-text">Aucun événement actif.</p>
+</div>
+{% else %}
+
+<div class="search-section" x-data="{ query: '', status: '' }">
+    <div class="search-bar">
+        <input type="text"
+               class="form-input search-input"
+               placeholder="Rechercher par nom, n° ticket, téléphone…"
+               x-model="query"
+               hx-get="{% url 'caisse_search' %}"
+               hx-trigger="input changed delay:250ms, search"
+               hx-target="#caisse-results"
+               hx-include="[name='status']"
+               name="q"
+               autofocus>
+        <select name="status" class="form-select search-filter"
+                x-model="status"
+                hx-get="{% url 'caisse_search' %}"
+                hx-trigger="change"
+                hx-target="#caisse-results"
+                hx-include="[name='q']">
+            <option value="">Tous</option>
+            <option value="non_paye">Non payé</option>
+            <option value="paye">Payé</option>
+        </select>
+    </div>
+
+    <div id="caisse-results"
+         hx-get="{% url 'caisse_search' %}"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+        <div class="loading-placeholder">Chargement…</div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}

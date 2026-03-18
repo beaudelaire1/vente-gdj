@@ -1,0 +1,69 @@
+{% load static %}{% load order_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket #{{ order.ticket_number }} — Vente GDJ EEBC</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        @media print {
+            body { margin: 0; padding: 0; }
+            .ticket-wrapper { width: 80mm; margin: 0 auto; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="ticket-body">
+
+<div class="no-print" style="text-align:center; padding:1rem;">
+    <button onclick="window.print()" class="btn btn-primary">Imprimer</button>
+    <button onclick="window.close()" class="btn btn-ghost">Fermer</button>
+</div>
+
+<div class="ticket-wrapper">
+    <div class="ticket-header-print">
+        <strong>Vente GDJ EEBC</strong><br>
+        {{ order.event.name }}<br>
+        {{ order.event.date|date:"d/m/Y" }}
+    </div>
+
+    <div class="ticket-divider"></div>
+
+    <div class="ticket-number-print">
+        TICKET #{{ order.ticket_number }}
+    </div>
+
+    <div class="ticket-divider"></div>
+
+    <div class="ticket-details">
+        <p><strong>{{ order.customer.name }}</strong></p>
+        <p>{{ order.get_forfait_display }} — {{ order.nb_persons }} pers.</p>
+        <p>{{ order.get_dining_type_display }}</p>
+    </div>
+
+    <div class="ticket-divider"></div>
+
+    <div class="ticket-details">
+        <p>{{ order.meat }}</p>
+        <p>{{ order.side }}</p>
+        {% if order.vegetable %}<p>{{ order.vegetable }}</p>{% endif %}
+    </div>
+
+    <div class="ticket-divider"></div>
+
+    <div class="ticket-total-print">
+        TOTAL : {{ order.total_amount }}€
+    </div>
+
+    <div class="ticket-qr">
+        <img src="{% url 'qr_code_image' order.qr_token %}" alt="QR" width="120" height="120">
+        <p class="ticket-qr-hint">Scannez pour suivre votre plat</p>
+    </div>
+
+    <div class="ticket-footer-print">
+        Merci et bon appétit !
+    </div>
+</div>
+
+</body>
+</html>

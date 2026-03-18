@@ -1,0 +1,51 @@
+{% load order_tags %}
+{% if orders %}
+<div class="orders-table-wrap">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="col-ticket">#</th>
+                <th>Client</th>
+                <th>Plat</th>
+                <th class="text-center">Pers.</th>
+                <th class="text-center">Type</th>
+                <th class="text-right">Montant</th>
+                <th class="text-center">Paiement</th>
+                <th class="text-center">Préparation</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr class="order-row {% if order.is_paid %}row-paid{% endif %}" id="order-row-{{ order.pk }}">
+                <td class="col-ticket font-mono font-bold">{{ order.ticket_number }}</td>
+                <td class="font-medium">{{ order.customer.name }}</td>
+                <td class="text-muted">{{ order.dish_summary }}</td>
+                <td class="text-center">{{ order.nb_persons }}</td>
+                <td class="text-center">
+                    <span class="badge badge-outline">{{ order.get_dining_type_display }}</span>
+                </td>
+                <td class="text-right font-mono font-bold">{{ order.total_amount }}€</td>
+                <td class="text-center">
+                    <span class="badge {{ order.payment_status|payment_badge_class }}">
+                        {{ order.get_payment_status_display }}
+                    </span>
+                </td>
+                <td class="text-center">
+                    <span class="badge {{ order.preparation_status|prep_badge_class }}">
+                        {{ order.preparation_status|prep_icon }} {{ order.get_preparation_status_display }}
+                    </span>
+                </td>
+                <td class="text-right">
+                    <a href="{% url 'order_detail' order.pk %}" class="btn btn-sm btn-ghost">Détail</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p class="empty-state-text">Aucune commande trouvée.</p>
+</div>
+{% endif %}

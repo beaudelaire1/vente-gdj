@@ -1,0 +1,94 @@
+{% extends "core/base.html" %}
+{% load order_tags %}
+
+{% block title %}Préparation — Vente GDJ EEBC{% endblock %}
+{% block body_class %}page-preparation{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-inner">
+        <div>
+            <h1 class="page-title">Préparation & Distribution</h1>
+            {% if event %}
+            <p class="page-subtitle">{{ event.name }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if not event %}
+<div class="empty-state">
+    <p class="empty-state-text">Aucun événement actif.</p>
+</div>
+{% else %}
+
+<div class="prep-controls" x-data="{ status: 'non_lance', query: '' }">
+    <div class="prep-filters">
+        <button class="btn btn-filter"
+                :class="status === '' && 'btn-filter-active'"
+                @click="status = ''"
+                hx-get="{% url 'preparation_list' %}"
+                hx-target="#prep-results"
+                hx-vals='{"status": ""}'
+                hx-include="[name='q']">
+            Tous
+        </button>
+        <button class="btn btn-filter"
+                :class="status === 'non_lance' && 'btn-filter-active'"
+                @click="status = 'non_lance'"
+                hx-get="{% url 'preparation_list' %}"
+                hx-target="#prep-results"
+                hx-vals='{"status": "non_lance"}'
+                hx-include="[name='q']">
+            ○ Non lancés
+        </button>
+        <button class="btn btn-filter"
+                :class="status === 'en_preparation' && 'btn-filter-active'"
+                @click="status = 'en_preparation'"
+                hx-get="{% url 'preparation_list' %}"
+                hx-target="#prep-results"
+                hx-vals='{"status": "en_preparation"}'
+                hx-include="[name='q']">
+            ◔ En préparation
+        </button>
+        <button class="btn btn-filter"
+                :class="status === 'prepare' && 'btn-filter-active'"
+                @click="status = 'prepare'"
+                hx-get="{% url 'preparation_list' %}"
+                hx-target="#prep-results"
+                hx-vals='{"status": "prepare"}'
+                hx-include="[name='q']">
+            ● Préparés
+        </button>
+        <button class="btn btn-filter"
+                :class="status === 'recupere' && 'btn-filter-active'"
+                @click="status = 'recupere'"
+                hx-get="{% url 'preparation_list' %}"
+                hx-target="#prep-results"
+                hx-vals='{"status": "recupere"}'
+                hx-include="[name='q']">
+            ✓ Récupérés
+        </button>
+    </div>
+
+    <div class="search-bar search-bar-compact">
+        <input type="text" name="q" class="form-input search-input"
+               placeholder="N° ticket ou nom…"
+               x-model="query"
+               hx-get="{% url 'preparation_list' %}"
+               hx-trigger="input changed delay:250ms"
+               hx-target="#prep-results"
+               hx-include="[name='status']">
+        <input type="hidden" name="status" :value="status">
+    </div>
+</div>
+
+<div id="prep-results"
+     hx-get="{% url 'preparation_list' %}?status=non_lance"
+     hx-trigger="load"
+     hx-swap="innerHTML">
+    <div class="loading-placeholder">Chargement…</div>
+</div>
+
+{% endif %}
+{% endblock %}

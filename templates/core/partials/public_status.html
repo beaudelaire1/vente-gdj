@@ -1,0 +1,35 @@
+{% load order_tags %}
+<div class="public-status-block">
+    <div class="public-status-badge badge-xl {{ order.preparation_status|prep_badge_class }}">
+        {{ order.preparation_status|prep_icon }}
+        {{ order.get_preparation_status_display }}
+    </div>
+    {% if order.updated_at %}
+    <div class="public-updated">
+        Mis à jour : {{ order.updated_at|date:"H:i" }}
+    </div>
+    {% endif %}
+
+    <!-- Timeline visuelle -->
+    <div class="status-timeline">
+        <div class="timeline-step {% if order.preparation_status == 'non_lance' %}timeline-active{% endif %} {% if order.preparation_status != 'non_lance' %}timeline-done{% endif %}">
+            <div class="timeline-dot"></div>
+            <span class="timeline-label">Non lancé</span>
+        </div>
+        <div class="timeline-line {% if order.preparation_status == 'en_preparation' or order.preparation_status == 'prepare' or order.preparation_status == 'recupere' %}timeline-line-done{% endif %}"></div>
+        <div class="timeline-step {% if order.preparation_status == 'en_preparation' %}timeline-active{% endif %} {% if order.preparation_status == 'prepare' or order.preparation_status == 'recupere' %}timeline-done{% endif %}">
+            <div class="timeline-dot"></div>
+            <span class="timeline-label">En préparation</span>
+        </div>
+        <div class="timeline-line {% if order.preparation_status == 'prepare' or order.preparation_status == 'recupere' %}timeline-line-done{% endif %}"></div>
+        <div class="timeline-step {% if order.preparation_status == 'prepare' %}timeline-active{% endif %} {% if order.preparation_status == 'recupere' %}timeline-done{% endif %}">
+            <div class="timeline-dot"></div>
+            <span class="timeline-label">Préparé</span>
+        </div>
+        <div class="timeline-line {% if order.preparation_status == 'recupere' %}timeline-line-done{% endif %}"></div>
+        <div class="timeline-step {% if order.preparation_status == 'recupere' %}timeline-active{% endif %}">
+            <div class="timeline-dot"></div>
+            <span class="timeline-label">Récupéré</span>
+        </div>
+    </div>
+</div>

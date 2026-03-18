@@ -1,0 +1,50 @@
+{% load static %}{% load order_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi commande #{{ order.ticket_number }} — Vente GDJ EEBC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+</head>
+<body class="public-body">
+
+<div class="public-wrapper">
+    <div class="public-header">
+        <span class="brand-accent">Vente</span> GDJ EEBC
+    </div>
+
+    <div class="public-card">
+        <div class="public-ticket-number">
+            <span class="font-mono">#{{ order.ticket_number }}</span>
+        </div>
+
+        <div class="public-customer">{{ order.customer.name }}</div>
+
+        <div class="public-dish">
+            <strong>{{ order.meat }}</strong> + {{ order.side }}{% if order.vegetable %} + {{ order.vegetable }}{% endif %}
+        </div>
+
+        <div class="public-meta">
+            {{ order.nb_persons }} personne{{ order.nb_persons|pluralize }} · {{ order.get_dining_type_display }}
+        </div>
+
+        <div id="public-status"
+             hx-get="{% url 'order_public_status' order.qr_token %}"
+             hx-trigger="every 10s"
+             hx-swap="innerHTML">
+            {% include "core/partials/public_status.html" %}
+        </div>
+    </div>
+
+    <div class="public-footer">
+        {{ order.event.name }} — {{ order.event.date|date:"d/m/Y" }}
+    </div>
+</div>
+
+</body>
+</html>

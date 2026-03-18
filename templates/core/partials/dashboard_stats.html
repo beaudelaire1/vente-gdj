@@ -1,0 +1,37 @@
+{% load order_tags %}
+<!-- KPIs -->
+<div class="stats-grid">
+    <div class="stat-card stat-card-accent">
+        <div class="stat-value">{{ stats.total }}</div>
+        <div class="stat-label">Commandes</div>
+    </div>
+    <div class="stat-card stat-card-success">
+        <div class="stat-value">{{ stats.paid }}</div>
+        <div class="stat-label">Payées</div>
+    </div>
+    <div class="stat-card stat-card-danger">
+        <div class="stat-value">{{ stats.unpaid }}</div>
+        <div class="stat-label">Non payées</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.non_lance }}</div>
+        <div class="stat-label">Non lancés</div>
+    </div>
+    <div class="stat-card stat-card-warning">
+        <div class="stat-value">{{ stats.en_preparation }}</div>
+        <div class="stat-label">En préparation</div>
+    </div>
+    <div class="stat-card stat-card-success">
+        <div class="stat-value">{{ stats.prepare }}</div>
+        <div class="stat-label">Préparés</div>
+    </div>
+    <div class="stat-card stat-card-muted">
+        <div class="stat-value">{{ stats.recupere }}</div>
+        <div class="stat-label">Récupérés</div>
+    </div>
+    <div class="stat-card stat-card-gold">
+        <div class="stat-value">{{ stats.total_encaisse }}€</div>
+        <div class="stat-label">Encaissé</div>
+        <div class="stat-sub">sur {{ stats.total_attendu }}€</div>
+    </div>
+</div>

@@ -1,0 +1,90 @@
+{% extends "core/base.html" %}
+{% load order_tags %}
+
+{% block title %}Tableau de bord — Vente GDJ EEBC{% endblock %}
+{% block body_class %}page-dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-inner">
+        <div>
+            <h1 class="page-title">Tableau de bord</h1>
+            {% if event %}
+            <p class="page-subtitle">{{ event.name }} — {{ event.date|date:"d/m/Y" }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if not event %}
+<div class="empty-state">
+    <p class="empty-state-text">Aucun événement actif.</p>
+</div>
+{% else %}
+
+<div id="dashboard-stats"
+     hx-get="{% url 'dashboard_stats' %}"
+     hx-trigger="every 15s"
+     hx-swap="innerHTML">
+    {% include "core/partials/dashboard_stats.html" %}
+</div>
+
+<!-- Répartitions -->
+<div class="dashboard-section">
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Par viande</h3>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Viande</th>
+                            <th class="text-right">Commandes</th>
+                            <th class="text-right">Personnes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in meat_stats %}
+                        <tr>
+                            <td class="font-medium">{{ item.meat }}</td>
+                            <td class="text-right">{{ item.count }}</td>
+                            <td class="text-right">{{ item.total_persons }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Par type</h3>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th class="text-right">Commandes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in dining_stats %}
+                        <tr>
+                            <td class="font-medium">
+                                {% if item.dining_type == 'sur_place' %}Sur place{% else %}À emporter{% endif %}
+                            </td>
+                            <td class="text-right">{{ item.count }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}

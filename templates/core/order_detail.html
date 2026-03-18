@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+{% load order_tags %}
+
+{% block title %}Commande #{{ order.ticket_number }} — Vente GDJ EEBC{% endblock %}
+{% block body_class %}page-detail{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-inner">
+        <div>
+            <a href="{% url 'caisse' %}" class="back-link">&larr; Retour caisse</a>
+            <h1 class="page-title">Commande <span class="font-mono">#{{ order.ticket_number }}</span></h1>
+        </div>
+        <div class="page-header-actions">
+            <a href="{% url 'ticket_print' order.pk %}" class="btn btn-ghost" target="_blank">
+                Imprimer ticket
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="order-card-{{ order.pk }}">
+    {% include "core/partials/order_card.html" %}
+</div>
+{% endblock %}

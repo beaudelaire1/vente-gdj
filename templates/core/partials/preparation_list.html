@@ -1,0 +1,14 @@
+{% load order_tags %}
+{% if orders %}
+<div class="prep-grid">
+    {% for order in orders %}
+    <div class="prep-card prep-card-{{ order.preparation_status }}" id="prep-card-{{ order.pk }}">
+        {% include "core/partials/prep_card.html" %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p class="empty-state-text">Aucune commande pour ce filtre.</p>
+</div>
+{% endif %}

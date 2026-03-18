@@ -1,0 +1,38 @@
+{% load order_tags %}
+<div class="prep-card-inner">
+    <div class="prep-card-header">
+        <span class="prep-ticket font-mono">#{{ order.ticket_number }}</span>
+        <span class="badge {{ order.preparation_status|prep_badge_class }}">
+            {{ order.preparation_status|prep_icon }} {{ order.get_preparation_status_display }}
+        </span>
+    </div>
+    <div class="prep-card-body">
+        <div class="prep-customer">{{ order.customer.name }}</div>
+        <div class="prep-dish">{{ order.dish_summary }}</div>
+        <div class="prep-meta">
+            <span>{{ order.nb_persons }} pers.</span>
+            <span class="badge badge-outline badge-sm">{{ order.get_dining_type_display }}</span>
+            {% if order.is_paid %}
+            <span class="badge badge-success badge-sm">Payé</span>
+            {% else %}
+            <span class="badge badge-danger badge-sm">Non payé</span>
+            {% endif %}
+        </div>
+    </div>
+    {% with next_status=order.preparation_status|next_prep_status %}
+    {% if next_status %}
+    <div class="prep-card-footer">
+        <form method="post" action="{% url 'transition_status' order.pk %}"
+              hx-post="{% url 'transition_status' order.pk %}"
+              hx-target="#prep-card-{{ order.pk }}"
+              hx-swap="innerHTML">
+            {% csrf_token %}
+            <input type="hidden" name="new_status" value="{{ next_status }}">
+            <button type="submit" class="btn btn-primary btn-sm btn-full">
+                {{ order.preparation_status|next_prep_label }}
+            </button>
+        </form>
+    </div>
+    {% endif %}
+    {% endwith %}
+</div>
