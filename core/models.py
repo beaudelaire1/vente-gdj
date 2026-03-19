@@ -5,6 +5,31 @@ from django.conf import settings
 from django.utils import timezone
 
 
+class MenuOption(models.Model):
+    TYPE_MEAT = 'meat'
+    TYPE_SIDE = 'side'
+    TYPE_VEGETABLE = 'vegetable'
+    TYPE_CHOICES = [
+        (TYPE_MEAT, 'Viande'),
+        (TYPE_SIDE, 'Accompagnement'),
+        (TYPE_VEGETABLE, 'Légume'),
+    ]
+
+    option_type = models.CharField("Type d'option", max_length=20, choices=TYPE_CHOICES)
+    label = models.CharField("Libellé", max_length=100)
+    is_active = models.BooleanField("Actif", default=True)
+    sort_order = models.PositiveIntegerField("Ordre", default=0)
+
+    class Meta:
+        verbose_name = 'Option de menu'
+        verbose_name_plural = 'Options de menu'
+        ordering = ['option_type', 'sort_order', 'label']
+        unique_together = ['option_type', 'label']
+
+    def __str__(self):
+        return f"{self.get_option_type_display()} — {self.label}"
+
+
 class Event(models.Model):
     """Campagne de vente / événement (restaurant éphémère, vente gâteaux, etc.)"""
     name = models.CharField("Nom", max_length=200)

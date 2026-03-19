@@ -2,7 +2,7 @@ import openpyxl
 from datetime import date as dt_date
 from decimal import Decimal
 from django.core.management.base import BaseCommand
-from core.models import Event, Customer, Order
+from core.models import Event, Customer, MenuOption, Order
 
 
 class Command(BaseCommand):
@@ -112,6 +112,20 @@ class Command(BaseCommand):
             customer, _ = Customer.objects.get_or_create(
                 name=nom.strip(),
             )
+
+            MenuOption.objects.get_or_create(
+                option_type=MenuOption.TYPE_MEAT,
+                label=(viande or 'Non spécifié').strip(),
+            )
+            MenuOption.objects.get_or_create(
+                option_type=MenuOption.TYPE_SIDE,
+                label=(accompagnement or 'Non spécifié').strip(),
+            )
+            if legume:
+                MenuOption.objects.get_or_create(
+                    option_type=MenuOption.TYPE_VEGETABLE,
+                    label=legume.strip(),
+                )
 
             # Créer la commande
             order = Order(

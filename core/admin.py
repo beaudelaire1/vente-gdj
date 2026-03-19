@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Event, Customer, Order, StatusLog, UserProfile, Notification
+from .forms import OrderAdminForm
+from .models import Event, Customer, Order, StatusLog, UserProfile, Notification, MenuOption
 
 
 @admin.register(Event)
@@ -14,8 +15,17 @@ class CustomerAdmin(admin.ModelAdmin):
     search_fields = ('name', 'phone')
 
 
+@admin.register(MenuOption)
+class MenuOptionAdmin(admin.ModelAdmin):
+    list_display = ('label', 'option_type', 'sort_order', 'is_active')
+    list_filter = ('option_type', 'is_active')
+    search_fields = ('label',)
+    ordering = ('option_type', 'sort_order', 'label')
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    form = OrderAdminForm
     list_display = (
         'ticket_number', 'customer', 'event', 'meat', 'side',
         'dining_type', 'total_amount', 'payment_status', 'preparation_status',
