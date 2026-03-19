@@ -9,7 +9,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
-    preDeployCommand: python manage.py migrate && python manage.py setup_users
+    preDeployCommand: python manage.py bootstrap_app --excel=liste_resto_eph.xlsx --clear --event-name="Restaurant Éphémère GDJ EEBC" --event-date=2026-03-28
     startCommand: gunicorn config.wsgi:application
     envVars:
       - key: DJANGO_SECRET_KEY
