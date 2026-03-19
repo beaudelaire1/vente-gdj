@@ -8,3 +8,9 @@ media/
 dist/
 .dist/
 *.log
+# Data backups (auto-generated, use export_data command)
+data_backup.xlsx
+data_backup.json
+data_*.xlsx
+data_*.json
+backups/
