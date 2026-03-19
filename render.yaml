@@ -12,6 +12,7 @@ services:
       pip install -r requirements.txt
       python manage.py collectstatic --noinput
       python manage.py migrate
+      python manage.py setup_users
     startCommand: gunicorn config.wsgi:application
     envVars:
       - key: DJANGO_SECRET_KEY
@@ -27,4 +28,16 @@ services:
           name: vente-gdj-eebc-db
           property: connectionString
       - key: PYTHON_VERSION
-        value: "3.12.0"
+        value: "3.13.0"
+      - key: DEFAULT_ADMIN_USERNAME
+        value: "admin"
+      - key: DEFAULT_ADMIN_PASSWORD
+        generateValue: true
+      - key: DEFAULT_CAISSE_USERNAME
+        value: "caisse"
+      - key: DEFAULT_CAISSE_PASSWORD
+        generateValue: true
+      - key: DEFAULT_PREPARATION_USERNAME
+        value: "preparation"
+      - key: DEFAULT_PREPARATION_PASSWORD
+        generateValue: true

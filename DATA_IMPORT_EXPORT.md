@@ -4,6 +4,20 @@ This directory contains utilities for backing up and restoring database data.
 
 ## Commands
 
+### Bootstrap complet
+
+Prépare une instance locale ou Render en une seule commande : migrations, utilisateurs par défaut, puis import de données.
+
+**Depuis Excel :**
+```bash
+python manage.py bootstrap_app --excel liste_resto_eph.xlsx --clear
+```
+
+**Depuis JSON :**
+```bash
+python manage.py bootstrap_app --json my_backup.json --clear
+```
+
 ### Export Data
 
 Export the entire database to Excel or JSON format for backup and migration.
@@ -66,6 +80,12 @@ After deploying to Render and running migrations:
 python manage.py import_data --file=backup.xlsx
 ```
 
+Ou en une seule commande :
+
+```bash
+python manage.py bootstrap_app --json backup.json --clear
+```
+
 Or upload the backup file and use Django shell:
 ```bash
 python manage.py shell
@@ -98,6 +118,7 @@ python manage.py shell
 3. **Version control** — Keep backup files locally, NOT in git (see .gitignore)
 4. **Test imports** — Test import commands in development first
 5. **Production safety** — Use `--clear` only in testing environments
+6. **Single runtime** — Keep local and Render aligned on Python 3.13.0
 
 ## 🐛 Troubleshooting
 

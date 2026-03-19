@@ -13,11 +13,11 @@ Système de gestion pour restaurant éphémère et ventes ponctuelles.
 
 ```bash
 pip install -r requirements.txt
-python manage.py migrate
-python manage.py setup_users
-python manage.py import_excel liste_resto_eph.xlsx
+C:/Users/vilme/AppData/Local/Programs/Python/Python313/python.exe manage.py bootstrap_app --excel liste_resto_eph.xlsx
 python manage.py runserver
 ```
+
+Version Python cible : `3.13.0` (voir [.python-version](.python-version)).
 
 ## Utilisateurs par défaut
 
@@ -46,7 +46,19 @@ python manage.py import_excel chemin/vers/fichier.xlsx --event-name "Mon événe
 1. Créer un Web Service + PostgreSQL sur Render
 2. Connecter le repo Git
 3. Variables d'environnement configurées dans `render.yaml`
-4. Après déploiement : `python manage.py setup_users` via le Shell Render
+4. Après déploiement, ouvrir le Shell Render et injecter les données :
+
+```bash
+python manage.py bootstrap_app --json data_backup.json --clear
+```
+
+Ou si vous partez du fichier source Excel :
+
+```bash
+python manage.py bootstrap_app --excel liste_resto_eph.xlsx --clear
+```
+
+À chaque déploiement, Render exécute aussi `python manage.py setup_users` dans le build. Les comptes `admin`, `caisse` et `preparation` sont donc créés ou mis à jour automatiquement depuis les variables d'environnement Render.
 
 ## 📊 Backup & Migration
 
@@ -68,6 +80,18 @@ python manage.py import_data --file=backup_prod.xlsx
 
 # Importer en effaçant les données existantes (TEST ONLY)
 python manage.py import_data --file=backup_prod.xlsx --clear
+
+# Bootstrap complet (migrations + users + import)
+python manage.py bootstrap_app --json backup_prod.json --clear
 ```
 
 **Voir [DATA_IMPORT_EXPORT.md](DATA_IMPORT_EXPORT.md) pour plus de détails.**
+
+## Variables Render pour les comptes
+
+- `DEFAULT_ADMIN_USERNAME`
+- `DEFAULT_ADMIN_PASSWORD`
+- `DEFAULT_CAISSE_USERNAME`
+- `DEFAULT_CAISSE_PASSWORD`
+- `DEFAULT_PREPARATION_USERNAME`
+- `DEFAULT_PREPARATION_PASSWORD`
