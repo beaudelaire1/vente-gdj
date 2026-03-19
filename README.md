@@ -47,3 +47,27 @@ python manage.py import_excel chemin/vers/fichier.xlsx --event-name "Mon événe
 2. Connecter le repo Git
 3. Variables d'environnement configurées dans `render.yaml`
 4. Après déploiement : `python manage.py setup_users` via le Shell Render
+
+## 📊 Backup & Migration
+
+### Exporter une sauvegarde
+
+```bash
+# Excel (recommandé)
+python manage.py export_data --format=excel --output=backup_prod.xlsx
+
+# JSON
+python manage.py export_data --format=json --output=backup_prod.json
+```
+
+### Restaurer une sauvegarde
+
+```bash
+# En local ou en production (Render Shell)
+python manage.py import_data --file=backup_prod.xlsx
+
+# Importer en effaçant les données existantes (TEST ONLY)
+python manage.py import_data --file=backup_prod.xlsx --clear
+```
+
+**Voir [DATA_IMPORT_EXPORT.md](DATA_IMPORT_EXPORT.md) pour plus de détails.**
