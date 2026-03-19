@@ -6,7 +6,7 @@
     </div>
     {% if order.updated_at %}
     <div class="public-updated">
-        Mis à jour : {{ order.updated_at|date:"H:i" }}
+        Mis à jour il y a {{ order.updated_at|time_ago }}
     </div>
     {% endif %}
 
@@ -32,4 +32,10 @@
             <span class="timeline-label">Récupéré</span>
         </div>
     </div>
+
+    {% if order.is_paid %}
+    <div class="mt-sm">
+        <span class="badge badge-success">💰 Payé</span>
+    </div>
+    {% endif %}
 </div>

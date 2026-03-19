@@ -1,4 +1,5 @@
 from django import template
+from django.utils.timesince import timesince
 
 register = template.Library()
 
@@ -6,10 +7,10 @@ register = template.Library()
 @register.filter
 def prep_badge_class(status):
     mapping = {
-        'non_lance': 'badge-neutral',
-        'en_preparation': 'badge-warning',
-        'prepare': 'badge-success',
-        'recupere': 'badge-muted',
+        'non_lance': 'badge-status-idle',
+        'en_preparation': 'badge-status-progress',
+        'prepare': 'badge-status-ready',
+        'recupere': 'badge-status-done',
     }
     return mapping.get(status, 'badge-neutral')
 
@@ -48,8 +49,33 @@ def next_prep_status(status):
 @register.filter
 def next_prep_label(status):
     mapping = {
-        'non_lance': 'Lancer',
-        'en_preparation': 'Marquer préparé',
-        'prepare': 'Marquer récupéré',
+        'non_lance': '🚀 Lancer la préparation',
+        'en_preparation': '✅ Marquer préparé',
+        'prepare': '📦 Marquer récupéré',
     }
     return mapping.get(status, '')
+
+
+@register.filter
+def next_prep_btn_class(status):
+    """Classe CSS du bouton de transition selon le statut actuel."""
+    mapping = {
+        'non_lance': 'btn-primary',
+        'en_preparation': 'btn-success',
+        'prepare': 'btn-ghost',
+    }
+    return mapping.get(status, 'btn-primary')
+
+
+@register.filter
+def prep_row_class(status):
+    """Classe CSS pour colorer les lignes du tableau caisse par statut."""
+    return f'row-status-{status}'
+
+
+@register.filter
+def time_ago(value):
+    """Affiche le temps écoulé depuis une date."""
+    if not value:
+        return ''
+    return timesince(value)

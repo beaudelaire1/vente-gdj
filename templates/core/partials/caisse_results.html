@@ -17,7 +17,7 @@
         </thead>
         <tbody>
         {% for order in orders %}
-            <tr class="order-row {% if order.is_paid %}row-paid{% endif %}" id="order-row-{{ order.pk }}">
+            <tr class="order-row {% if order.is_paid %}row-paid{% endif %} {{ order.preparation_status|prep_row_class }}" id="order-row-{{ order.pk }}">
                 <td class="col-ticket font-mono font-bold">{{ order.ticket_number }}</td>
                 <td class="font-medium">{{ order.customer.name }}</td>
                 <td class="text-muted">{{ order.dish_summary }}</td>

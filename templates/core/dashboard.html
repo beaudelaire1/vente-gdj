@@ -13,6 +13,13 @@
             <p class="page-subtitle">{{ event.name }} — {{ event.date|date:"d/m/Y" }}</p>
             {% endif %}
         </div>
+        {% if event %}
+        <div class="page-header-actions">
+            <a href="{% url 'export_csv' %}" class="btn btn-ghost btn-sm">
+                📊 Export CSV
+            </a>
+        </div>
+        {% endif %}
     </div>
 </div>
 

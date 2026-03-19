@@ -13,13 +13,16 @@
             <span>{{ order.nb_persons }} pers.</span>
             <span class="badge badge-outline badge-sm">{{ order.get_dining_type_display }}</span>
             {% if order.is_paid %}
-            <span class="badge badge-success badge-sm">Payé</span>
+            <span class="badge badge-success badge-sm">💰 Payé</span>
             {% else %}
             <span class="badge badge-danger badge-sm">Non payé</span>
             {% endif %}
         </div>
+        {% if order.started_at and not order.prepared_at %}
+        <div class="text-xs text-muted mt-sm">⏱ Lancé il y a {{ order.started_at|time_ago }}</div>
+        {% endif %}
     </div>
-    {% with next_status=order.preparation_status|next_prep_status %}
+    {% with next_status=order.preparation_status|next_prep_status btn_class=order.preparation_status|next_prep_btn_class %}
     {% if next_status %}
     <div class="prep-card-footer">
         <form method="post" action="{% url 'transition_status' order.pk %}"
@@ -28,7 +31,7 @@
               hx-swap="innerHTML">
             {% csrf_token %}
             <input type="hidden" name="new_status" value="{{ next_status }}">
-            <button type="submit" class="btn btn-primary btn-sm btn-full">
+            <button type="submit" class="btn {{ btn_class }} btn-sm btn-full">
                 {{ order.preparation_status|next_prep_label }}
             </button>
         </form>

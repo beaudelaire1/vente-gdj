@@ -1,16 +1,20 @@
 import io
+import csv
 import qrcode
 import qrcode.constants
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
-from django.db.models import Q, Sum, Count
+from django.db.models import Q, Sum, Count, Avg, F
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.conf import settings
 
-from .models import Event, Order, UserProfile
+from .models import Event, Order, UserProfile, Notification
+
+from functools import wraps
 
 
 # ── Helpers ──────────────────────────────────────────────────────────
@@ -31,6 +35,7 @@ def get_user_role(user):
 def role_required(*roles):
     """Décorateur pour restreindre l'accès par rôle."""
     def decorator(view_func):
+        @wraps(view_func)
         def wrapper(request, *args, **kwargs):
             if not request.user.is_authenticated:
                 return redirect('login')
@@ -38,8 +43,6 @@ def role_required(*roles):
             if user_role not in roles and not request.user.is_superuser:
                 return render(request, 'core/forbidden.html', status=403)
             return view_func(request, *args, **kwargs)
-        wrapper.__name__ = view_func.__name__
-        wrapper.__module__ = view_func.__module__
         return wrapper
     return decorator
 
@@ -78,29 +81,38 @@ def dashboard_view(request):
     if not event:
         return render(request, 'core/dashboard.html', {'event': None})
 
-    orders = Order.objects.filter(event=event)
-    stats = {
-        'total': orders.count(),
-        'paid': orders.filter(payment_status=Order.PAYMENT_PAYE).count(),
-        'unpaid': orders.exclude(payment_status=Order.PAYMENT_PAYE).count(),
-        'non_lance': orders.filter(preparation_status=Order.PREP_NON_LANCE).count(),
-        'en_preparation': orders.filter(preparation_status=Order.PREP_EN_PREPARATION).count(),
-        'prepare': orders.filter(preparation_status=Order.PREP_PREPARE).count(),
-        'recupere': orders.filter(preparation_status=Order.PREP_RECUPERE).count(),
-        'total_encaisse': orders.filter(
-            payment_status=Order.PAYMENT_PAYE
-        ).aggregate(s=Sum('total_amount'))['s'] or 0,
-        'total_attendu': orders.aggregate(s=Sum('total_amount'))['s'] or 0,
-    }
+    orders = Order.objects.filter(event=event).select_related('customer')
+    stats = orders.aggregate(
+        total=Count('id'),
+        paid=Count('id', filter=Q(payment_status=Order.PAYMENT_PAYE)),
+        unpaid=Count('id', filter=~Q(payment_status=Order.PAYMENT_PAYE)),
+        non_lance=Count('id', filter=Q(preparation_status=Order.PREP_NON_LANCE)),
+        en_preparation=Count('id', filter=Q(preparation_status=Order.PREP_EN_PREPARATION)),
+        prepare=Count('id', filter=Q(preparation_status=Order.PREP_PREPARE)),
+        recupere=Count('id', filter=Q(preparation_status=Order.PREP_RECUPERE)),
+        total_encaisse=Sum('total_amount', filter=Q(payment_status=Order.PAYMENT_PAYE)),
+        total_attendu=Sum('total_amount'),
+    )
+    stats['total_encaisse'] = stats['total_encaisse'] or 0
+    stats['total_attendu'] = stats['total_attendu'] or 0
 
-    # Répartition par viande
+    # Temps moyen de préparation
+    prep_times = orders.filter(
+        started_at__isnull=False, prepared_at__isnull=False
+    ).annotate(
+        prep_duration=F('prepared_at') - F('started_at')
+    ).aggregate(avg_prep=Avg('prep_duration'))
+    stats['avg_prep_minutes'] = (
+        round(prep_times['avg_prep'].total_seconds() / 60, 1)
+        if prep_times['avg_prep'] else None
+    )
+
+    # Répartitions
     meat_stats = (
         orders.values('meat')
         .annotate(count=Count('id'), total_persons=Sum('nb_persons'))
         .order_by('-count')
     )
-
-    # Répartition par type
     dining_stats = (
         orders.values('dining_type')
         .annotate(count=Count('id'))
@@ -124,19 +136,30 @@ def dashboard_stats_partial(request):
     if not event:
         return HttpResponse('')
     orders = Order.objects.filter(event=event)
-    stats = {
-        'total': orders.count(),
-        'paid': orders.filter(payment_status=Order.PAYMENT_PAYE).count(),
-        'unpaid': orders.exclude(payment_status=Order.PAYMENT_PAYE).count(),
-        'non_lance': orders.filter(preparation_status=Order.PREP_NON_LANCE).count(),
-        'en_preparation': orders.filter(preparation_status=Order.PREP_EN_PREPARATION).count(),
-        'prepare': orders.filter(preparation_status=Order.PREP_PREPARE).count(),
-        'recupere': orders.filter(preparation_status=Order.PREP_RECUPERE).count(),
-        'total_encaisse': orders.filter(
-            payment_status=Order.PAYMENT_PAYE
-        ).aggregate(s=Sum('total_amount'))['s'] or 0,
-        'total_attendu': orders.aggregate(s=Sum('total_amount'))['s'] or 0,
-    }
+    stats = orders.aggregate(
+        total=Count('id'),
+        paid=Count('id', filter=Q(payment_status=Order.PAYMENT_PAYE)),
+        unpaid=Count('id', filter=~Q(payment_status=Order.PAYMENT_PAYE)),
+        non_lance=Count('id', filter=Q(preparation_status=Order.PREP_NON_LANCE)),
+        en_preparation=Count('id', filter=Q(preparation_status=Order.PREP_EN_PREPARATION)),
+        prepare=Count('id', filter=Q(preparation_status=Order.PREP_PREPARE)),
+        recupere=Count('id', filter=Q(preparation_status=Order.PREP_RECUPERE)),
+        total_encaisse=Sum('total_amount', filter=Q(payment_status=Order.PAYMENT_PAYE)),
+        total_attendu=Sum('total_amount'),
+    )
+    stats['total_encaisse'] = stats['total_encaisse'] or 0
+    stats['total_attendu'] = stats['total_attendu'] or 0
+
+    prep_times = orders.filter(
+        started_at__isnull=False, prepared_at__isnull=False
+    ).annotate(
+        prep_duration=F('prepared_at') - F('started_at')
+    ).aggregate(avg_prep=Avg('prep_duration'))
+    stats['avg_prep_minutes'] = (
+        round(prep_times['avg_prep'].total_seconds() / 60, 1)
+        if prep_times['avg_prep'] else None
+    )
+
     return render(request, 'core/partials/dashboard_stats.html', {'stats': stats, 'event': event})
 
 
@@ -193,8 +216,9 @@ def order_detail_partial(request, pk):
 @login_required
 @role_required(UserProfile.ROLE_ADMIN, UserProfile.ROLE_CAISSE)
 def mark_paid(request, pk):
-    order = get_object_or_404(Order, pk=pk)
+    order = get_object_or_404(Order.objects.select_related('customer'), pk=pk)
     order.mark_paid(user=request.user)
+    messages.success(request, f'Commande #{order.ticket_number} marquée comme payée.')
     if request.headers.get('HX-Request'):
         return render(request, 'core/partials/order_card.html', {'order': order})
     return redirect('order_detail', pk=pk)
@@ -237,12 +261,19 @@ def preparation_list(request):
 @login_required
 @role_required(UserProfile.ROLE_ADMIN, UserProfile.ROLE_PREPARATION)
 def transition_status(request, pk):
-    order = get_object_or_404(Order, pk=pk)
+    order = get_object_or_404(Order.objects.select_related('customer'), pk=pk)
     new_status = request.POST.get('new_status')
+    valid_statuses = dict(Order.PREP_CHOICES)
+    if new_status not in valid_statuses:
+        messages.error(request, "Statut invalide.")
+        if request.headers.get('HX-Request'):
+            return render(request, 'core/partials/prep_card.html', {'order': order})
+        return redirect('preparation')
     try:
         order.transition_preparation(new_status, user=request.user)
-    except ValueError:
-        pass
+        messages.success(request, f'#{order.ticket_number} → {valid_statuses[new_status]}')
+    except ValueError as e:
+        messages.error(request, str(e))
     if request.headers.get('HX-Request'):
         return render(request, 'core/partials/prep_card.html', {'order': order})
     return redirect('preparation')
@@ -289,3 +320,81 @@ def qr_code_image(request, token):
 def ticket_print_view(request, pk):
     order = get_object_or_404(Order.objects.select_related('customer', 'event'), pk=pk)
     return render(request, 'core/ticket_print.html', {'order': order})
+
+
+# ── Notifications ────────────────────────────────────────────────────
+
+@login_required
+def notifications_partial(request):
+    """Fragment HTMX — notifications non lues pour le rôle de l'utilisateur."""
+    role = get_user_role(request.user)
+    notifs = Notification.objects.filter(
+        target_role=role, is_read=False
+    ).select_related('order')[:20]
+    return render(request, 'core/partials/notifications.html', {
+        'notifications': notifs,
+        'notif_count': notifs.count(),
+    })
+
+
+@login_required
+def notifications_count(request):
+    """HTML snippet pour le badge de count (HTMX)."""
+    role = get_user_role(request.user)
+    count = Notification.objects.filter(target_role=role, is_read=False).count()
+    if count > 0:
+        return HttpResponse(f'<span class="notif-badge">{count}</span>')
+    return HttpResponse('')
+
+
+@require_POST
+@login_required
+def notifications_mark_read(request):
+    """Marquer toutes les notifications comme lues."""
+    role = get_user_role(request.user)
+    Notification.objects.filter(target_role=role, is_read=False).update(is_read=True)
+    if request.headers.get('HX-Request'):
+        return render(request, 'core/partials/notifications.html', {
+            'notifications': [],
+            'notif_count': 0,
+        })
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+# ── Export CSV ───────────────────────────────────────────────────────
+
+@login_required
+@role_required(UserProfile.ROLE_ADMIN)
+def export_csv(request):
+    """Export des commandes de l'événement actif en CSV."""
+    event = get_active_event()
+    if not event:
+        messages.error(request, "Aucun événement actif.")
+        return redirect('dashboard')
+
+    orders = Order.objects.filter(event=event).select_related('customer').order_by('ticket_number')
+
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = f'attachment; filename="commandes_{event.date}.csv"'
+    response.write('\ufeff')  # BOM for Excel
+
+    writer = csv.writer(response, delimiter=';')
+    writer.writerow([
+        'N° Ticket', 'Client', 'Téléphone', 'Forfait', 'Personnes',
+        'Type', 'Viande', 'Accompagnement', 'Légume',
+        'Prix unitaire', 'Total', 'Paiement', 'Préparation',
+        'Créé le', 'Payé le', 'Préparé le', 'Récupéré le',
+    ])
+    for o in orders:
+        writer.writerow([
+            o.ticket_number, o.customer.name, o.customer.phone,
+            o.get_forfait_display(), o.nb_persons,
+            o.get_dining_type_display(), o.meat, o.side, o.vegetable,
+            o.unit_price, o.total_amount,
+            o.get_payment_status_display(), o.get_preparation_status_display(),
+            o.created_at.strftime('%d/%m/%Y %H:%M') if o.created_at else '',
+            o.paid_at.strftime('%d/%m/%Y %H:%M') if o.paid_at else '',
+            o.prepared_at.strftime('%d/%m/%Y %H:%M') if o.prepared_at else '',
+            o.retrieved_at.strftime('%d/%m/%Y %H:%M') if o.retrieved_at else '',
+        ])
+    return response

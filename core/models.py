@@ -1,6 +1,6 @@
 import uuid
 from decimal import Decimal
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from django.utils import timezone
 
@@ -112,6 +112,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     paid_at = models.DateTimeField("Payé le", null=True, blank=True)
+    started_at = models.DateTimeField("Lancé le", null=True, blank=True)
     prepared_at = models.DateTimeField("Préparé le", null=True, blank=True)
     retrieved_at = models.DateTimeField("Récupéré le", null=True, blank=True)
 
@@ -122,6 +123,12 @@ class Order(models.Model):
         verbose_name = "Commande"
         unique_together = ['event', 'ticket_number']
         ordering = ['ticket_number']
+        indexes = [
+            models.Index(fields=['event', 'preparation_status']),
+            models.Index(fields=['event', 'payment_status']),
+            models.Index(fields=['qr_token']),
+            models.Index(fields=['ticket_number']),
+        ]
 
     def __str__(self):
         return f"#{self.ticket_number} — {self.customer.name}"
@@ -150,32 +157,51 @@ class Order(models.Model):
                 f"Transition impossible : {self.get_preparation_status_display()} → "
                 f"{dict(self.PREP_CHOICES).get(new_status, new_status)}"
             )
-        old_status = self.preparation_status
-        self.preparation_status = new_status
-        now = timezone.now()
-        if new_status == self.PREP_PREPARE:
-            self.prepared_at = now
-        elif new_status == self.PREP_RECUPERE:
-            self.retrieved_at = now
-        self.save()
-        StatusLog.objects.create(
-            order=self,
-            old_status=old_status,
-            new_status=new_status,
-            changed_by=user,
-        )
+        with transaction.atomic():
+            order = Order.objects.select_for_update().get(pk=self.pk)
+            if not order.can_transition_to(new_status):
+                raise ValueError("Transition déjà effectuée par un autre utilisateur.")
+            old_status = order.preparation_status
+            order.preparation_status = new_status
+            now = timezone.now()
+            if new_status == self.PREP_EN_PREPARATION:
+                order.started_at = now
+            elif new_status == self.PREP_PREPARE:
+                order.prepared_at = now
+            elif new_status == self.PREP_RECUPERE:
+                order.retrieved_at = now
+            order.save()
+            StatusLog.objects.create(
+                order=order,
+                old_status=old_status,
+                new_status=new_status,
+                changed_by=user,
+            )
+            # Refresh self from DB
+            self.preparation_status = order.preparation_status
+            self.started_at = order.started_at
+            self.prepared_at = order.prepared_at
+            self.retrieved_at = order.retrieved_at
+            self.updated_at = order.updated_at
 
     def mark_paid(self, user=None):
         if self.payment_status == self.PAYMENT_PAYE:
             return
-        old = self.payment_status
-        self.payment_status = self.PAYMENT_PAYE
-        self.paid_at = timezone.now()
-        self.save()
-        StatusLog.objects.create(
-            order=self, old_status=f'pay:{old}',
-            new_status=f'pay:{self.PAYMENT_PAYE}', changed_by=user,
-        )
+        with transaction.atomic():
+            order = Order.objects.select_for_update().get(pk=self.pk)
+            if order.payment_status == self.PAYMENT_PAYE:
+                return
+            old = order.payment_status
+            order.payment_status = self.PAYMENT_PAYE
+            order.paid_at = timezone.now()
+            order.save()
+            StatusLog.objects.create(
+                order=order, old_status=f'pay:{old}',
+                new_status=f'pay:{self.PAYMENT_PAYE}', changed_by=user,
+            )
+            # Refresh self
+            self.payment_status = order.payment_status
+            self.paid_at = order.paid_at
 
     def compute_total(self):
         """Calcule le tarif selon les règles métier."""
@@ -226,3 +252,31 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} — {self.get_role_display()}"
+
+
+class Notification(models.Model):
+    """Notification envoyée à chaque changement d'état via signals."""
+    TYPE_PREP = 'preparation'
+    TYPE_PAYMENT = 'payment'
+    TYPE_CHOICES = [
+        (TYPE_PREP, 'Préparation'),
+        (TYPE_PAYMENT, 'Paiement'),
+    ]
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    target_role = models.CharField(max_length=20, choices=UserProfile.ROLE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Notification"
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['target_role', 'is_read']),
+        ]
+
+    def __str__(self):
+        return f"{self.title} — #{self.order.ticket_number}"

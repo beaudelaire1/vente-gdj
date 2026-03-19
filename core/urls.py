@@ -23,6 +23,14 @@ urlpatterns = [
     path('preparation/list/', views.preparation_list, name='preparation_list'),
     path('commande/<int:pk>/transition/', views.transition_status, name='transition_status'),
 
+    # Notifications
+    path('notifications/', views.notifications_partial, name='notifications_partial'),
+    path('notifications/count/', views.notifications_count, name='notifications_count'),
+    path('notifications/read/', views.notifications_mark_read, name='notifications_mark_read'),
+
+    # Export
+    path('export/csv/', views.export_csv, name='export_csv'),
+
     # Public / QR
     path('suivi/<uuid:token>/', views.order_public_view, name='order_public'),
     path('suivi/<uuid:token>/status/', views.order_public_status, name='order_public_status'),

@@ -43,6 +43,42 @@
             </a>
             {% endif %}
             <div class="nav-spacer"></div>
+
+            <!-- Notifications -->
+            <div style="position: relative;" x-data="{ notifOpen: false }">
+                <button class="notif-trigger" @click="notifOpen = !notifOpen" @click.away="notifOpen = false">
+                    🔔
+                    <span id="notif-badge"
+                          hx-get="{% url 'notifications_count' %}"
+                          hx-trigger="load, every 10s"
+                          hx-swap="innerHTML"
+                          hx-target="#notif-badge"></span>
+                </button>
+                <div class="notif-panel" x-show="notifOpen" x-cloak
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-2"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0">
+                    <div class="notif-header">
+                        <span class="notif-title">Notifications</span>
+                        <form method="post" action="{% url 'notifications_mark_read' %}"
+                              hx-post="{% url 'notifications_mark_read' %}"
+                              hx-target="#notif-list"
+                              hx-swap="innerHTML">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-ghost" style="padding: 0.25rem 0.5rem; font-size: 0.6875rem;">Tout lire</button>
+                        </form>
+                    </div>
+                    <div id="notif-list"
+                         hx-get="{% url 'notifications_partial' %}"
+                         hx-trigger="load, every 10s"
+                         hx-swap="innerHTML">
+                    </div>
+                </div>
+            </div>
+
             <span class="nav-user">{{ user.username }}</span>
             <a href="{% url 'logout' %}" class="nav-link nav-link-logout">Déconnexion</a>
         </div>
@@ -50,15 +86,22 @@
 </nav>
 {% endif %}
 
-<!-- Messages -->
+<!-- Toast Notifications -->
 {% if messages %}
-<div class="messages-container">
+<div class="toast-container" x-data>
     {% for message in messages %}
-    <div class="message message-{{ message.tags }}" x-data="{ show: true }" x-show="show"
+    <div class="toast toast-{{ message.tags }}"
+         x-data="{ show: true }"
+         x-show="show"
+         x-init="setTimeout(() => show = false, 4000)"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-x-8"
+         x-transition:enter-end="opacity-100 translate-x-0"
          x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-        {{ message }}
-        <button @click="show = false" class="message-close">&times;</button>
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0 translate-x-8">
+        <span>{{ message }}</span>
+        <button @click="show = false" class="toast-close">&times;</button>
     </div>
     {% endfor %}
 </div>
