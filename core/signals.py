@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .models import StatusLog, Notification, UserProfile
+from .models import Order, StatusLog, Notification, UserProfile
 
 
 @receiver(post_save, sender=StatusLog)
@@ -24,6 +24,11 @@ def create_notification_on_status_change(sender, instance, created, **kwargs):
                 message=f'La commande #{order.ticket_number} de {order.customer.name} a été payée ({order.total_amount}€).',
                 target_role=UserProfile.ROLE_PREPARATION,
             )
+
+            # Lancer automatiquement la préparation si elle n'a pas encore démarré
+            order.refresh_from_db(fields=['preparation_status'])
+            if order.preparation_status == Order.PREP_NON_LANCE:
+                order.transition_preparation(Order.PREP_EN_PREPARATION, user=log.changed_by)
     else:
         # Notification préparation → pour la caisse et l'admin
         labels = dict(order.PREP_CHOICES)
