@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .forms import OrderAdminForm
+from .forms import OrderAdminForm, OrderItemAdminForm
 from .models import Event, Customer, Order, OrderItem, StatusLog, UserProfile, Notification, MenuOption
 
 
@@ -25,6 +25,7 @@ class MenuOptionAdmin(admin.ModelAdmin):
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
+    form = OrderItemAdminForm
     extra = 1
     fields = ('sort_order', 'person_label', 'meat', 'side', 'vegetable', 'supplement', 'supplement_price')
     verbose_name = "Plat"
