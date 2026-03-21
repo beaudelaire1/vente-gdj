@@ -1,0 +1,1527 @@
+{
+  "events": [
+    {
+      "name": "Restaurant Éphémère GDJ EEBC",
+      "date": "2026-03-28",
+      "description": "",
+      "is_active": true
+    }
+  ],
+  "customers": [
+    {
+      "name": "Famille Baman",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Cléante",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Gaspard",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Evelyne",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Rosina",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Dorval Mamouna",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Bossé Tiroulio",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Merena",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Jacotin",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Jonas",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Judith",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Gabriel",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Doisy",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Sr Mervil",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Pierre Louis",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Tamara",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Mode",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Artiste",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Sr maricoise",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Julien",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Laurent",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Léa",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "sr Petit frère",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Moricia",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Odette",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Françoise",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "sr Toussaint",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Roseline",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Marie Carnouche",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Raymonde",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Georges",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Serina",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Beaudelaire",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Marcelin Chaarlie",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Claunette",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Laurole",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Luxama",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Bruno",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Lézimène",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Madcène",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Madina",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Famille Bourdeau",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Medson",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Sheskah",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Hélène jean",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "Rita Pierre",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "name": "maturin",
+      "phone": "",
+      "email": ""
+    }
+  ],
+  "orders": [
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Baman",
+      "ticket_number": 1,
+      "forfait": "famille",
+      "nb_persons": 5,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz blanc",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 85.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Cléante",
+      "ticket_number": 2,
+      "forfait": "famille",
+      "nb_persons": 3,
+      "dining_type": "a_emporter",
+      "meat": "poulet fricassé",
+      "side": "Riz blanc",
+      "vegetable": "",
+      "unit_price": 15.0,
+      "total_amount": 45.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Gaspard",
+      "ticket_number": 3,
+      "forfait": "famille",
+      "nb_persons": 3,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 60.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Evelyne",
+      "ticket_number": 5,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "a_emporter",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 15.0,
+      "total_amount": 15.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Rosina",
+      "ticket_number": 6,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "poulet fricassé",
+      "side": "Riz blanc",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Dorval Mamouna",
+      "ticket_number": 7,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Travers de Porc",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Bossé Tiroulio",
+      "ticket_number": 8,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Merena",
+      "ticket_number": 9,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "poulet fricassé",
+      "side": "Riz blanc",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Jacotin",
+      "ticket_number": 10,
+      "forfait": "famille",
+      "nb_persons": 4,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 80.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Jonas",
+      "ticket_number": 11,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Judith",
+      "ticket_number": 12,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "poulet fricassé",
+      "side": "Gratin de Banane",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Gabriel",
+      "ticket_number": 13,
+      "forfait": "famille",
+      "nb_persons": 2,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 40.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Doisy",
+      "ticket_number": 15,
+      "forfait": "famille",
+      "nb_persons": 2,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 40.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Sr Mervil",
+      "ticket_number": 17,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "poulet fricassé",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Pierre Louis",
+      "ticket_number": 18,
+      "forfait": "famille",
+      "nb_persons": 2,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 40.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Tamara",
+      "ticket_number": 20,
+      "forfait": "famille",
+      "nb_persons": 6,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 102.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Mode",
+      "ticket_number": 26,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Artiste",
+      "ticket_number": 27,
+      "forfait": "famille",
+      "nb_persons": 3,
+      "dining_type": "a_emporter",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "unit_price": 15.0,
+      "total_amount": 45.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Sr maricoise",
+      "ticket_number": 30,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Julien",
+      "ticket_number": 31,
+      "forfait": "famille",
+      "nb_persons": 7,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 119.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Laurent",
+      "ticket_number": 38,
+      "forfait": "famille",
+      "nb_persons": 2,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Non spécifié",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 40.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Léa",
+      "ticket_number": 40,
+      "forfait": "famille",
+      "nb_persons": 3,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 60.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "sr Petit frère",
+      "ticket_number": 43,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "a_emporter",
+      "meat": "Travers de Porc",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 15.0,
+      "total_amount": 15.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Moricia",
+      "ticket_number": 44,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "a_emporter",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 15.0,
+      "total_amount": 15.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Odette",
+      "ticket_number": 45,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "a_emporter",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 15.0,
+      "total_amount": 15.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Françoise",
+      "ticket_number": 46,
+      "forfait": "famille",
+      "nb_persons": 2,
+      "dining_type": "sur_place",
+      "meat": "poulet fricassé",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 40.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "sr Toussaint",
+      "ticket_number": 48,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Roseline",
+      "ticket_number": 49,
+      "forfait": "famille",
+      "nb_persons": 2,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 40.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Marie Carnouche",
+      "ticket_number": 51,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Travers de Porc",
+      "side": "Gratin de Banane",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Raymonde",
+      "ticket_number": 52,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "poulet fricassé",
+      "side": "Gratin de Banane",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Georges",
+      "ticket_number": 53,
+      "forfait": "famille",
+      "nb_persons": 3,
+      "dining_type": "sur_place",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 60.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Serina",
+      "ticket_number": 56,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "poulet fricassé",
+      "side": "Riz blanc",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Beaudelaire",
+      "ticket_number": 57,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Marcelin Chaarlie",
+      "ticket_number": 58,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Claunette",
+      "ticket_number": 59,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Laurole",
+      "ticket_number": 60,
+      "forfait": "famille",
+      "nb_persons": 4,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Riz blanc",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 80.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Luxama",
+      "ticket_number": 63,
+      "forfait": "famille",
+      "nb_persons": 4,
+      "dining_type": "sur_place",
+      "meat": "Travers de Porc",
+      "side": "Riz blanc",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 80.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Bruno",
+      "ticket_number": 67,
+      "forfait": "famille",
+      "nb_persons": 5,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Gratin de Banane",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 85.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Lézimène",
+      "ticket_number": 70,
+      "forfait": "famille",
+      "nb_persons": 3,
+      "dining_type": "sur_place",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 60.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Madcène",
+      "ticket_number": 74,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Madina",
+      "ticket_number": 75,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Famille Bourdeau",
+      "ticket_number": 76,
+      "forfait": "famille",
+      "nb_persons": 3,
+      "dining_type": "sur_place",
+      "meat": "poulet fricassé",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 60.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Medson",
+      "ticket_number": 79,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Travers de Porc",
+      "side": "Riz collé",
+      "vegetable": "Haricot vert",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Sheskah",
+      "ticket_number": 80,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz blanc",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Hélène jean",
+      "ticket_number": 81,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz blanc",
+      "vegetable": "Haricot vert",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "Rita Pierre",
+      "ticket_number": 84,
+      "forfait": "individuel",
+      "nb_persons": 1,
+      "dining_type": "sur_place",
+      "meat": "Bœuf",
+      "side": "Non spécifié",
+      "vegetable": "calalou",
+      "unit_price": 20.0,
+      "total_amount": 20.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    },
+    {
+      "event": "Restaurant Éphémère GDJ EEBC",
+      "customer": "maturin",
+      "ticket_number": 85,
+      "forfait": "famille",
+      "nb_persons": 2,
+      "dining_type": "sur_place",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz blanc",
+      "vegetable": "",
+      "unit_price": 20.0,
+      "total_amount": 40.0,
+      "payment_status": "non_paye",
+      "preparation_status": "non_lance"
+    }
+  ],
+  "order_items": [
+    {
+      "order_ticket": 3,
+      "person_label": "Gaspard Daphose",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 3,
+      "person_label": "Gaspard Byalone",
+      "meat": "Crevette sauce poivrée",
+      "side": "Gratin de Banane",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 10,
+      "person_label": "Kimie",
+      "meat": "Travers de Porc",
+      "side": "Riz blanc",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 13,
+      "person_label": "Fr Gabriel",
+      "meat": "Bœuf",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 13,
+      "person_label": "Sr Gabriel",
+      "meat": "poulet fricassé",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 15,
+      "person_label": "Fr Doisy",
+      "meat": "Crevette sauce poivrée",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 15,
+      "person_label": "sr Doisy",
+      "meat": "Bœuf",
+      "side": "Non spécifié",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 18,
+      "person_label": "Marenn Pierre Louis",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 18,
+      "person_label": "Pierre Louis",
+      "meat": "Bœuf",
+      "side": "Riz blanc",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 20,
+      "person_label": "Tamara 2",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 20,
+      "person_label": "Tamara 3",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 20,
+      "person_label": "Tamara 4",
+      "meat": "Travers de Porc",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 20,
+      "person_label": "Tamara 5",
+      "meat": "Travers de Porc",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 3
+    },
+    {
+      "order_ticket": 20,
+      "person_label": "Tamara 6",
+      "meat": "poulet fricassé",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 4
+    },
+    {
+      "order_ticket": 27,
+      "person_label": "Artiste 1",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 27,
+      "person_label": "Artiste 2",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 27,
+      "person_label": "Artiste 3",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 31,
+      "person_label": "Julien 1",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 31,
+      "person_label": "Julien 2",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 31,
+      "person_label": "Julien 3",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 31,
+      "person_label": "Julien 4",
+      "meat": "poulet fricassé",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 3
+    },
+    {
+      "order_ticket": 31,
+      "person_label": "Julien 5",
+      "meat": "poulet fricassé",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 4
+    },
+    {
+      "order_ticket": 31,
+      "person_label": "Julien 6",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 5
+    },
+    {
+      "order_ticket": 31,
+      "person_label": "Julien 7",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 6
+    },
+    {
+      "order_ticket": 38,
+      "person_label": "Fr Laurent",
+      "meat": "Bœuf",
+      "side": "Non spécifié",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 38,
+      "person_label": "Sr Laurent",
+      "meat": "Bœuf",
+      "side": "Non spécifié",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 40,
+      "person_label": "Léa 1",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 40,
+      "person_label": "Léa 2",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 40,
+      "person_label": "Léa 3",
+      "meat": "Bœuf",
+      "side": "Gratin de Banane",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 46,
+      "person_label": "Françoise 1",
+      "meat": "poulet fricassé",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 46,
+      "person_label": "Françoise 2",
+      "meat": "poulet fricassé",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 49,
+      "person_label": "Roseline 1",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 49,
+      "person_label": "Roseline 2",
+      "meat": "Bœuf",
+      "side": "Gratin de Banane",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 53,
+      "person_label": "Georges 1",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 53,
+      "person_label": "Georges 2",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 53,
+      "person_label": "Georges 3",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 60,
+      "person_label": "Pierre Laurole",
+      "meat": "Bœuf",
+      "side": "Riz blanc",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 60,
+      "person_label": "Margarette",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz blanc",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 60,
+      "person_label": "Mathias",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 60,
+      "person_label": "Ursule Guirant",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 3
+    },
+    {
+      "order_ticket": 63,
+      "person_label": "Gladys",
+      "meat": "Travers de Porc",
+      "side": "Riz blanc",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 63,
+      "person_label": "Lacia",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 63,
+      "person_label": "Clozel",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz blanc",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 63,
+      "person_label": "Edwin",
+      "meat": "Travers de Porc",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 3
+    },
+    {
+      "order_ticket": 67,
+      "person_label": "Mr Bruno",
+      "meat": "Crevette sauce poivrée",
+      "side": "Gratin de Banane",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 67,
+      "person_label": "Madame Bruno",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 67,
+      "person_label": "Eloise Bruno",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 67,
+      "person_label": "Gina",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 3
+    },
+    {
+      "order_ticket": 67,
+      "person_label": "Ocema",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 4
+    },
+    {
+      "order_ticket": 70,
+      "person_label": "Lézimène",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 70,
+      "person_label": "Chloé",
+      "meat": "Non spécifié",
+      "side": "Non spécifié",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 70,
+      "person_label": "Maman Lézimène",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 76,
+      "person_label": "Ermie",
+      "meat": "poulet fricassé",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 76,
+      "person_label": "Numa Marie",
+      "meat": "Bœuf",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    },
+    {
+      "order_ticket": 76,
+      "person_label": "Johnson",
+      "meat": "poulet fricassé",
+      "side": "Riz collé",
+      "vegetable": "calalou",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 2
+    },
+    {
+      "order_ticket": 85,
+      "person_label": "Maturin",
+      "meat": "Crevette sauce poivrée",
+      "side": "Riz blanc",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 0
+    },
+    {
+      "order_ticket": 85,
+      "person_label": "Jean-Baptiste",
+      "meat": "Travers de Porc",
+      "side": "Riz collé",
+      "vegetable": "",
+      "supplement": "",
+      "supplement_price": 0,
+      "sort_order": 1
+    }
+  ],
+  "statuslogs": []
+}
