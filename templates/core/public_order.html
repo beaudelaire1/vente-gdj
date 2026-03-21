@@ -68,7 +68,6 @@
     </div>
 
     <!-- Section avis client -->
-    {% if order.preparation_status == 'servi' %}
     <div class="public-card public-review-card mt-md" x-data="{ show: {% if order.customer_rating is None %}true{% else %}false{% endif %} }">
         {% if order.customer_rating is not None %}
         <div class="review-submitted">
@@ -124,7 +123,6 @@
         </div>
         {% endif %}
     </div>
-    {% endif %}
 
     <div class="public-footer">
         {{ order.event.name }} — {{ order.event.date|date:"d/m/Y" }}
