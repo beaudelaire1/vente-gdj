@@ -93,5 +93,63 @@
     </div>
 </div>
 
+<div class="dashboard-section">
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Feedback clients</h3>
+            </div>
+            <div class="card-body">
+                <div class="feedback-kpis">
+                    <div class="feedback-kpi">
+                        <div class="feedback-kpi-value">{{ feedback_stats.reviewed|default:0 }}</div>
+                        <div class="feedback-kpi-label">Avis reçus</div>
+                    </div>
+                    <div class="feedback-kpi feedback-kpi-highlight">
+                        <div class="feedback-kpi-value">
+                            {% if feedback_stats.avg_rating %}{{ feedback_stats.avg_rating }}/10{% else %}--{% endif %}
+                        </div>
+                        <div class="feedback-kpi-label">Note moyenne</div>
+                    </div>
+                    <div class="feedback-kpi">
+                        <div class="feedback-kpi-value">{{ feedback_stats.comments_count|default:0 }}</div>
+                        <div class="feedback-kpi-label">Commentaires</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Derniers commentaires</h3>
+            </div>
+            <div class="card-body">
+                {% if feedback_orders %}
+                <div class="feedback-feed">
+                    {% for order in feedback_orders %}
+                    <article class="feedback-item">
+                        <div class="feedback-item-head">
+                            <div>
+                                <div class="feedback-item-name">{{ order.customer.name }}</div>
+                                <div class="feedback-item-meta">Commande #{{ order.ticket_number }} · {{ order.get_dining_type_display }}</div>
+                            </div>
+                            <div class="feedback-item-rating">{{ order.customer_rating }}/10</div>
+                        </div>
+                        {% if order.customer_comment %}
+                        <p class="feedback-item-comment">{{ order.customer_comment }}</p>
+                        {% else %}
+                        <p class="feedback-item-comment feedback-item-comment-empty">Avis envoyé sans commentaire.</p>
+                        {% endif %}
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-state-text">Aucun avis client pour le moment.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endif %}
 {% endblock %}

@@ -13,21 +13,21 @@
         <div class="stat-value">{{ stats.unpaid }}</div>
         <div class="stat-label">Non payées</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-value" style="color: var(--color-status-idle);">{{ stats.non_lance }}</div>
+    <div class="stat-card stat-card-status-idle">
+        <div class="stat-value">{{ stats.non_lance }}</div>
         <div class="stat-label">Non lancés</div>
     </div>
-    <div class="stat-card" style="border-color: var(--color-status-progress);">
-        <div class="stat-value" style="color: var(--color-status-progress);">{{ stats.en_preparation }}</div>
+    <div class="stat-card stat-card-status-progress">
+        <div class="stat-value">{{ stats.en_preparation }}</div>
         <div class="stat-label">En préparation</div>
     </div>
-    <div class="stat-card" style="border-color: var(--color-status-ready);">
-        <div class="stat-value" style="color: var(--color-status-ready);">{{ stats.prepare }}</div>
+    <div class="stat-card stat-card-status-ready">
+        <div class="stat-value">{{ stats.prepare }}</div>
         <div class="stat-label">Préparés</div>
     </div>
-    <div class="stat-card" style="border-color: var(--color-status-done);">
-        <div class="stat-value" style="color: var(--color-status-done);">{{ stats.recupere }}</div>
-        <div class="stat-label">Récupérés</div>
+    <div class="stat-card stat-card-status-done">
+        <div class="stat-value">{{ stats.servi }}</div>
+        <div class="stat-label">Servis</div>
     </div>
     <div class="stat-card stat-card-gold">
         <div class="stat-value">{{ stats.total_encaisse }}€</div>

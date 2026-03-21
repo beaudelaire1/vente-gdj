@@ -1,5 +1,6 @@
 import io
 import csv
+from decimal import Decimal, InvalidOperation
 import qrcode
 import qrcode.constants
 from django.shortcuts import render, get_object_or_404, redirect
@@ -85,18 +86,18 @@ def dashboard_view(request):
     stats = orders.aggregate(
         total=Count('id'),
         paid=Count('id', filter=Q(payment_status=Order.PAYMENT_PAYE)),
-        unpaid=Count('id', filter=~Q(payment_status=Order.PAYMENT_PAYE)),
+        unpaid=Count('id', filter=Q(payment_status=Order.PAYMENT_NON_PAYE)),
+        attente=Count('id', filter=Q(payment_status=Order.PAYMENT_ATTENTE)),
         non_lance=Count('id', filter=Q(preparation_status=Order.PREP_NON_LANCE)),
         en_preparation=Count('id', filter=Q(preparation_status=Order.PREP_EN_PREPARATION)),
         prepare=Count('id', filter=Q(preparation_status=Order.PREP_PREPARE)),
-        recupere=Count('id', filter=Q(preparation_status=Order.PREP_RECUPERE)),
+        servi=Count('id', filter=Q(preparation_status=Order.PREP_SERVI)),
         total_encaisse=Sum('total_amount', filter=Q(payment_status=Order.PAYMENT_PAYE)),
         total_attendu=Sum('total_amount'),
     )
     stats['total_encaisse'] = stats['total_encaisse'] or 0
     stats['total_attendu'] = stats['total_attendu'] or 0
 
-    # Temps moyen de préparation
     prep_times = orders.filter(
         started_at__isnull=False, prepared_at__isnull=False
     ).annotate(
@@ -118,12 +119,23 @@ def dashboard_view(request):
         .annotate(count=Count('id'))
         .order_by('dining_type')
     )
+    feedback_orders = orders.exclude(customer_rating__isnull=True).order_by('-updated_at')
+    feedback_stats = feedback_orders.aggregate(
+        reviewed=Count('id'),
+        avg_rating=Avg('customer_rating'),
+        comments_count=Count('id', filter=~Q(customer_comment='')),
+    )
+    feedback_stats['avg_rating'] = (
+        round(feedback_stats['avg_rating'], 1) if feedback_stats['avg_rating'] else None
+    )
 
     return render(request, 'core/dashboard.html', {
         'event': event,
         'stats': stats,
         'meat_stats': meat_stats,
         'dining_stats': dining_stats,
+        'feedback_stats': feedback_stats,
+        'feedback_orders': feedback_orders[:8],
         'orders': orders,
     })
 
@@ -139,11 +151,12 @@ def dashboard_stats_partial(request):
     stats = orders.aggregate(
         total=Count('id'),
         paid=Count('id', filter=Q(payment_status=Order.PAYMENT_PAYE)),
-        unpaid=Count('id', filter=~Q(payment_status=Order.PAYMENT_PAYE)),
+        unpaid=Count('id', filter=Q(payment_status=Order.PAYMENT_NON_PAYE)),
+        attente=Count('id', filter=Q(payment_status=Order.PAYMENT_ATTENTE)),
         non_lance=Count('id', filter=Q(preparation_status=Order.PREP_NON_LANCE)),
         en_preparation=Count('id', filter=Q(preparation_status=Order.PREP_EN_PREPARATION)),
         prepare=Count('id', filter=Q(preparation_status=Order.PREP_PREPARE)),
-        recupere=Count('id', filter=Q(preparation_status=Order.PREP_RECUPERE)),
+        servi=Count('id', filter=Q(preparation_status=Order.PREP_SERVI)),
         total_encaisse=Sum('total_amount', filter=Q(payment_status=Order.PAYMENT_PAYE)),
         total_attendu=Sum('total_amount'),
     )
@@ -224,6 +237,32 @@ def mark_paid(request, pk):
     return redirect('order_detail', pk=pk)
 
 
+@require_POST
+@login_required
+@role_required(UserProfile.ROLE_ADMIN, UserProfile.ROLE_CAISSE)
+def mark_payment_pending(request, pk):
+    """Marque la commande payée avec monnaie en attente."""
+    order = get_object_or_404(Order.objects.select_related('customer'), pk=pk)
+    raw = request.POST.get('change_amount', '').strip()
+    try:
+        change_amount = Decimal(raw.replace(',', '.'))
+        if change_amount < 0:
+            raise ValueError()
+    except (InvalidOperation, ValueError):
+        messages.error(request, "Montant de monnaie invalide.")
+        if request.headers.get('HX-Request'):
+            return render(request, 'core/partials/order_card.html', {'order': order})
+        return redirect('order_detail', pk=pk)
+    order.mark_payment_pending(change_amount=change_amount, user=request.user)
+    messages.success(
+        request,
+        f'Commande #{order.ticket_number} — monnaie en attente ({change_amount}€).'
+    )
+    if request.headers.get('HX-Request'):
+        return render(request, 'core/partials/order_card.html', {'order': order})
+    return redirect('order_detail', pk=pk)
+
+
 # ── Préparation / Distribution ──────────────────────────────────────
 
 @login_required
@@ -287,6 +326,27 @@ def order_public_view(request, token):
         Order.objects.select_related('customer', 'event'), qr_token=token,
     )
     return render(request, 'core/public_order.html', {'order': order})
+
+
+def submit_review(request, token):
+    """Soumettre un avis client (note /10 + commentaire) — sans connexion requise."""
+    order = get_object_or_404(Order, qr_token=token)
+    if request.method != 'POST':
+        return redirect('order_public', token=token)
+    if order.customer_rating is not None:
+        messages.warning(request, "Vous avez déjà soumis un avis pour cette commande.")
+        return redirect('order_public', token=token)
+    try:
+        rating = int(request.POST.get('rating', 0))
+        if not (1 <= rating <= 10):
+            raise ValueError()
+    except (ValueError, TypeError):
+        messages.error(request, "Note invalide. Choisissez une valeur entre 1 et 10.")
+        return redirect('order_public', token=token)
+    comment = request.POST.get('comment', '').strip()[:1000]
+    order.submit_review(rating=rating, comment=comment)
+    messages.success(request, "Merci pour votre avis ! 😊")
+    return redirect('order_public', token=token)
 
 
 def order_public_status(request, token):
@@ -381,20 +441,25 @@ def export_csv(request):
     writer = csv.writer(response, delimiter=';')
     writer.writerow([
         'N° Ticket', 'Client', 'Téléphone', 'Forfait', 'Personnes',
-        'Type', 'Viande', 'Accompagnement', 'Légume',
-        'Prix unitaire', 'Total', 'Paiement', 'Préparation',
-        'Créé le', 'Payé le', 'Préparé le', 'Récupéré le',
+        'Type', 'Viande', 'Accompagnement', 'Légume', 'Supplément', 'Prix supplément',
+        'Prix unitaire', 'Total', 'Paiement', 'Monnaie à rendre', 'Préparation',
+        'Créé le', 'Payé le', 'Préparé le', 'Servi le',
+        'Note client', 'Commentaire client',
     ])
     for o in orders:
         writer.writerow([
             o.ticket_number, o.customer.name, o.customer.phone,
             o.get_forfait_display(), o.nb_persons,
             o.get_dining_type_display(), o.meat, o.side, o.vegetable,
+            o.supplement, o.supplement_price,
             o.unit_price, o.total_amount,
-            o.get_payment_status_display(), o.get_preparation_status_display(),
+            o.get_payment_status_display(), o.change_amount or '',
+            o.get_preparation_status_display(),
             o.created_at.strftime('%d/%m/%Y %H:%M') if o.created_at else '',
             o.paid_at.strftime('%d/%m/%Y %H:%M') if o.paid_at else '',
             o.prepared_at.strftime('%d/%m/%Y %H:%M') if o.prepared_at else '',
-            o.retrieved_at.strftime('%d/%m/%Y %H:%M') if o.retrieved_at else '',
+            o.served_at.strftime('%d/%m/%Y %H:%M') if o.served_at else '',
+            o.customer_rating or '',
+            o.customer_comment,
         ])
     return response

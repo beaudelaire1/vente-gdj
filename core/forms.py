@@ -10,8 +10,9 @@ class OrderAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._configure_menu_field('meat', MenuOption.TYPE_MEAT)
-        self._configure_menu_field('side', MenuOption.TYPE_SIDE)
+        # Pour les forfaits famille, meat/side peuvent être vides (gérés via les plats individuels)
+        self._configure_menu_field('meat', MenuOption.TYPE_MEAT, allow_blank=True)
+        self._configure_menu_field('side', MenuOption.TYPE_SIDE, allow_blank=True)
         self._configure_menu_field('vegetable', MenuOption.TYPE_VEGETABLE, allow_blank=True)
 
     def _configure_menu_field(self, field_name, option_type, allow_blank=False):
@@ -35,3 +36,17 @@ class OrderAdminForm(forms.ModelForm):
             label=self.fields[field_name].label,
             help_text=self.fields[field_name].help_text,
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        forfait = cleaned_data.get('forfait')
+        meat = cleaned_data.get('meat', '')
+        side = cleaned_data.get('side', '')
+        # Pour un forfait individuel, viande et accompagnement sont obligatoires
+        # (sauf si on utilise les plats individuels — cas famille géré via inline)
+        if forfait == Order.FORFAIT_INDIVIDUEL:
+            if not meat:
+                self.add_error('meat', "La viande est obligatoire pour un forfait individuel.")
+            if not side:
+                self.add_error('side', "L'accompagnement est obligatoire pour un forfait individuel.")
+        return cleaned_data

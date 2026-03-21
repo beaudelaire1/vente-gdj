@@ -61,13 +61,13 @@
             ● Préparés
         </button>
         <button class="btn btn-filter"
-                :class="status === 'recupere' && 'btn-filter-active'"
-                @click="status = 'recupere'"
+                :class="status === 'servi' && 'btn-filter-active'"
+                @click="status = 'servi'"
                 hx-get="{% url 'preparation_list' %}"
                 hx-target="#prep-results"
-                hx-vals='{"status": "recupere"}'
+                hx-vals='{"status": "servi"}'
                 hx-include="[name='q']">
-            ✓ Récupérés
+            ✓ Servis
         </button>
     </div>
 

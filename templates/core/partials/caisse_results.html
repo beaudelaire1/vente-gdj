@@ -7,6 +7,7 @@
                 <th class="col-ticket">#</th>
                 <th>Client</th>
                 <th>Plat</th>
+                <th>Avis</th>
                 <th class="text-center">Pers.</th>
                 <th class="text-center">Type</th>
                 <th class="text-right">Montant</th>
@@ -21,6 +22,20 @@
                 <td class="col-ticket font-mono font-bold">{{ order.ticket_number }}</td>
                 <td class="font-medium">{{ order.customer.name }}</td>
                 <td class="text-muted">{{ order.dish_summary }}</td>
+                <td>
+                    {% if order.customer_rating %}
+                    <div class="feedback-cell">
+                        <div class="feedback-cell-rating">{{ order.customer_rating }}/10</div>
+                        {% if order.customer_comment %}
+                        <div class="feedback-cell-comment">{{ order.customer_comment|truncatechars:80 }}</div>
+                        {% else %}
+                        <div class="feedback-cell-comment feedback-cell-comment-empty">Sans commentaire</div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <span class="text-muted text-sm">Aucun avis</span>
+                    {% endif %}
+                </td>
                 <td class="text-center">{{ order.nb_persons }}</td>
                 <td class="text-center">
                     <span class="badge badge-outline">{{ order.get_dining_type_display }}</span>

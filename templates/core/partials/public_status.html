@@ -16,20 +16,20 @@
             <div class="timeline-dot"></div>
             <span class="timeline-label">Non lancé</span>
         </div>
-        <div class="timeline-line {% if order.preparation_status == 'en_preparation' or order.preparation_status == 'prepare' or order.preparation_status == 'recupere' %}timeline-line-done{% endif %}"></div>
-        <div class="timeline-step {% if order.preparation_status == 'en_preparation' %}timeline-active{% endif %} {% if order.preparation_status == 'prepare' or order.preparation_status == 'recupere' %}timeline-done{% endif %}">
+        <div class="timeline-line {% if order.preparation_status == 'en_preparation' or order.preparation_status == 'prepare' or order.preparation_status == 'servi' %}timeline-line-done{% endif %}"></div>
+        <div class="timeline-step {% if order.preparation_status == 'en_preparation' %}timeline-active{% endif %} {% if order.preparation_status == 'prepare' or order.preparation_status == 'servi' %}timeline-done{% endif %}">
             <div class="timeline-dot"></div>
             <span class="timeline-label">En préparation</span>
         </div>
-        <div class="timeline-line {% if order.preparation_status == 'prepare' or order.preparation_status == 'recupere' %}timeline-line-done{% endif %}"></div>
-        <div class="timeline-step {% if order.preparation_status == 'prepare' %}timeline-active{% endif %} {% if order.preparation_status == 'recupere' %}timeline-done{% endif %}">
+        <div class="timeline-line {% if order.preparation_status == 'prepare' or order.preparation_status == 'servi' %}timeline-line-done{% endif %}"></div>
+        <div class="timeline-step {% if order.preparation_status == 'prepare' %}timeline-active{% endif %} {% if order.preparation_status == 'servi' %}timeline-done{% endif %}">
             <div class="timeline-dot"></div>
             <span class="timeline-label">Préparé</span>
         </div>
-        <div class="timeline-line {% if order.preparation_status == 'recupere' %}timeline-line-done{% endif %}"></div>
-        <div class="timeline-step {% if order.preparation_status == 'recupere' %}timeline-active{% endif %}">
+        <div class="timeline-line {% if order.preparation_status == 'servi' %}timeline-line-done{% endif %}"></div>
+        <div class="timeline-step {% if order.preparation_status == 'servi' %}timeline-active{% endif %}">
             <div class="timeline-dot"></div>
-            <span class="timeline-label">Récupéré</span>
+            <span class="timeline-label">Servi</span>
         </div>
     </div>
 

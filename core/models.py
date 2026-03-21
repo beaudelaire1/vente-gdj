@@ -1,8 +1,10 @@
 import uuid
 from decimal import Decimal
 from django.db import models, transaction
+from django.db.models import Sum
 from django.conf import settings
 from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class MenuOption(models.Model):
@@ -90,19 +92,19 @@ class Order(models.Model):
     PREP_NON_LANCE = 'non_lance'
     PREP_EN_PREPARATION = 'en_preparation'
     PREP_PREPARE = 'prepare'
-    PREP_RECUPERE = 'recupere'
+    PREP_SERVI = 'servi'
     PREP_CHOICES = [
         (PREP_NON_LANCE, 'Non lancé'),
         (PREP_EN_PREPARATION, 'En préparation'),
         (PREP_PREPARE, 'Préparé'),
-        (PREP_RECUPERE, 'Récupéré'),
+        (PREP_SERVI, 'Servi'),
     ]
 
     PREP_TRANSITIONS = {
         PREP_NON_LANCE: [PREP_EN_PREPARATION],
         PREP_EN_PREPARATION: [PREP_PREPARE],
-        PREP_PREPARE: [PREP_RECUPERE],
-        PREP_RECUPERE: [],
+        PREP_PREPARE: [PREP_SERVI],
+        PREP_SERVI: [],
     }
 
     # Relations
@@ -117,9 +119,16 @@ class Order(models.Model):
     forfait = models.CharField("Forfait", max_length=20, choices=FORFAIT_CHOICES)
     nb_persons = models.PositiveIntegerField("Nb personnes", default=1)
     dining_type = models.CharField("Type", max_length=20, choices=DINING_CHOICES)
-    meat = models.CharField("Viande", max_length=100)
-    side = models.CharField("Accompagnement", max_length=100)
+    meat = models.CharField("Viande", max_length=100, blank=True)
+    side = models.CharField("Accompagnement", max_length=100, blank=True)
     vegetable = models.CharField("Légume", max_length=100, blank=True)
+    supplement = models.CharField(
+        "Supplément", max_length=200, blank=True,
+        help_text="Ex: viande supplémentaire, accompagnement extra...",
+    )
+    supplement_price = models.DecimalField(
+        "Prix supplément", max_digits=6, decimal_places=2, default=Decimal('0.00'),
+    )
 
     # Tarification
     unit_price = models.DecimalField("Prix unitaire", max_digits=8, decimal_places=2)
@@ -128,6 +137,10 @@ class Order(models.Model):
     # Statuts
     payment_status = models.CharField(
         "Paiement", max_length=20, choices=PAYMENT_CHOICES, default=PAYMENT_NON_PAYE,
+    )
+    change_amount = models.DecimalField(
+        "Monnaie à rendre", max_digits=8, decimal_places=2, null=True, blank=True,
+        help_text="Montant de la monnaie à rendre au client.",
     )
     preparation_status = models.CharField(
         "Préparation", max_length=20, choices=PREP_CHOICES, default=PREP_NON_LANCE,
@@ -139,10 +152,15 @@ class Order(models.Model):
     paid_at = models.DateTimeField("Payé le", null=True, blank=True)
     started_at = models.DateTimeField("Lancé le", null=True, blank=True)
     prepared_at = models.DateTimeField("Préparé le", null=True, blank=True)
-    retrieved_at = models.DateTimeField("Récupéré le", null=True, blank=True)
+    served_at = models.DateTimeField("Servi le", null=True, blank=True)
 
-    # Notes
-    notes = models.TextField("Notes", blank=True)
+    # Notes & avis
+    notes = models.TextField("Notes internes", blank=True)
+    customer_comment = models.TextField("Commentaire client", blank=True)
+    customer_rating = models.PositiveSmallIntegerField(
+        "Note client (/10)", null=True, blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+    )
 
     class Meta:
         verbose_name = "Commande"
@@ -153,6 +171,7 @@ class Order(models.Model):
             models.Index(fields=['event', 'payment_status']),
             models.Index(fields=['qr_token']),
             models.Index(fields=['ticket_number']),
+            models.Index(fields=['customer_rating']),
         ]
 
     def __str__(self):
@@ -160,18 +179,24 @@ class Order(models.Model):
 
     @property
     def dish_summary(self):
-        parts = [self.meat, self.side]
-        if self.vegetable:
-            parts.append(self.vegetable)
+        # Pour les forfaits famille avec items, afficher un résumé
+        if self.forfait == self.FORFAIT_FAMILLE and self.pk:
+            count = self.items.count()
+            if count:
+                return f"{count} plat{'s' if count > 1 else ''} (famille)"
+        parts = [p for p in [self.meat, self.side, self.vegetable] if p]
+        if self.supplement:
+            parts.append(f"+ {self.supplement}")
         return ' + '.join(parts)
 
     @property
     def is_paid(self):
-        return self.payment_status == self.PAYMENT_PAYE
+        """Vrai si la commande est payée ou en attente de monnaie."""
+        return self.payment_status in (self.PAYMENT_PAYE, self.PAYMENT_ATTENTE)
 
     @property
-    def is_retrieved(self):
-        return self.preparation_status == self.PREP_RECUPERE
+    def is_served(self):
+        return self.preparation_status == self.PREP_SERVI
 
     def can_transition_to(self, new_status):
         return new_status in self.PREP_TRANSITIONS.get(self.preparation_status, [])
@@ -182,8 +207,17 @@ class Order(models.Model):
                 f"Transition impossible : {self.get_preparation_status_display()} → "
                 f"{dict(self.PREP_CHOICES).get(new_status, new_status)}"
             )
+        # Blocage : impossible de lancer sans paiement
+        if new_status == self.PREP_EN_PREPARATION and self.payment_status == self.PAYMENT_NON_PAYE:
+            raise ValueError(
+                "Impossible de lancer la préparation : la commande n'est pas encore payée."
+            )
         with transaction.atomic():
             order = Order.objects.select_for_update().get(pk=self.pk)
+            if new_status == self.PREP_EN_PREPARATION and order.payment_status == self.PAYMENT_NON_PAYE:
+                raise ValueError(
+                    "Impossible de lancer la préparation : la commande n'est pas encore payée."
+                )
             if not order.can_transition_to(new_status):
                 raise ValueError("Transition déjà effectuée par un autre utilisateur.")
             old_status = order.preparation_status
@@ -193,8 +227,8 @@ class Order(models.Model):
                 order.started_at = now
             elif new_status == self.PREP_PREPARE:
                 order.prepared_at = now
-            elif new_status == self.PREP_RECUPERE:
-                order.retrieved_at = now
+            elif new_status == self.PREP_SERVI:
+                order.served_at = now
             order.save()
             StatusLog.objects.create(
                 order=order,
@@ -206,7 +240,7 @@ class Order(models.Model):
             self.preparation_status = order.preparation_status
             self.started_at = order.started_at
             self.prepared_at = order.prepared_at
-            self.retrieved_at = order.retrieved_at
+            self.served_at = order.served_at
             self.updated_at = order.updated_at
 
     def mark_paid(self, user=None):
@@ -218,6 +252,7 @@ class Order(models.Model):
                 return
             old = order.payment_status
             order.payment_status = self.PAYMENT_PAYE
+            order.change_amount = None
             order.paid_at = timezone.now()
             order.save()
             StatusLog.objects.create(
@@ -226,7 +261,41 @@ class Order(models.Model):
             )
             # Refresh self
             self.payment_status = order.payment_status
+            self.change_amount = None
             self.paid_at = order.paid_at
+
+    def mark_payment_pending(self, change_amount, user=None):
+        """Marque la commande comme payée avec monnaie en attente."""
+        if self.payment_status == self.PAYMENT_PAYE:
+            return
+        with transaction.atomic():
+            order = Order.objects.select_for_update().get(pk=self.pk)
+            if order.payment_status == self.PAYMENT_PAYE:
+                return
+            old = order.payment_status
+            order.payment_status = self.PAYMENT_ATTENTE
+            order.change_amount = change_amount
+            order.paid_at = timezone.now()
+            order.save()
+            StatusLog.objects.create(
+                order=order, old_status=f'pay:{old}',
+                new_status=f'pay:{self.PAYMENT_ATTENTE}', changed_by=user,
+            )
+            # Refresh self
+            self.payment_status = order.payment_status
+            self.change_amount = order.change_amount
+            self.paid_at = order.paid_at
+
+    def submit_review(self, rating, comment=''):
+        """Enregistre l'avis client (note sur 10 + commentaire optionnel)."""
+        if self.customer_rating is not None:
+            return  # Avis déjà soumis
+        Order.objects.filter(pk=self.pk).update(
+            customer_rating=rating,
+            customer_comment=comment,
+        )
+        self.customer_rating = rating
+        self.customer_comment = comment
 
     def compute_total(self):
         """Calcule le tarif selon les règles métier."""
@@ -235,6 +304,12 @@ class Order(models.Model):
         total = price * self.nb_persons
         if self.forfait == self.FORFAIT_FAMILLE and self.nb_persons >= 5:
             total = total * Decimal('0.85')
+        # Supplément au niveau de la commande
+        total += (self.supplement_price or Decimal('0.00'))
+        # Suppléments des plats individuels (si déjà sauvegardé)
+        if self.pk:
+            items_extra = self.items.aggregate(s=Sum('supplement_price'))['s'] or Decimal('0.00')
+            total += items_extra
         self.total_amount = total.quantize(Decimal('0.01'))
 
 
@@ -305,3 +380,45 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.title} — #{self.order.ticket_number}"
+
+
+class OrderItem(models.Model):
+    """Détail d'un plat individuel au sein d'une commande (forfait famille)."""
+
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name='items', verbose_name="Commande",
+    )
+    person_label = models.CharField(
+        "Personne", max_length=100, blank=True,
+        help_text="Ex : Adulte 1, Enfant, Papa...",
+    )
+    meat = models.CharField("Viande", max_length=100, blank=True)
+    side = models.CharField("Accompagnement", max_length=100, blank=True)
+    vegetable = models.CharField("Légume", max_length=100, blank=True)
+    supplement = models.CharField(
+        "Supplément", max_length=200, blank=True,
+        help_text="Viande ou accompagnement supplémentaire payant",
+    )
+    supplement_price = models.DecimalField(
+        "Prix supplément", max_digits=6, decimal_places=2, default=Decimal('0.00'),
+    )
+    sort_order = models.PositiveSmallIntegerField("Ordre", default=0)
+
+    class Meta:
+        verbose_name = "Plat"
+        verbose_name_plural = "Plats"
+        ordering = ['sort_order', 'id']
+
+    def __str__(self):
+        parts = [p for p in [self.meat, self.side, self.vegetable] if p]
+        label = ' + '.join(parts) or "Plat vide"
+        if self.person_label:
+            return f"{self.person_label} : {label}"
+        return label
+
+    @property
+    def dish_summary(self):
+        parts = [p for p in [self.meat, self.side, self.vegetable] if p]
+        if self.supplement:
+            parts.append(f"+ {self.supplement}")
+        return ' + '.join(parts)

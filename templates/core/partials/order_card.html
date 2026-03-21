@@ -39,19 +39,55 @@
             <h3 class="card-title">Commande</h3>
         </div>
         <div class="card-body">
+            {% if order.forfait == 'famille' and order.items.exists %}
+            <!-- Détail des plats (forfait famille) -->
+            <div class="detail-row">
+                <span class="detail-label">Plats</span>
+                <span class="detail-value">
+                    <table class="items-table">
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td class="item-label text-muted">
+                                {% if item.person_label %}{{ item.person_label }}{% else %}Plat {{ forloop.counter }}{% endif %}
+                            </td>
+                            <td class="item-dish">{{ item.dish_summary }}</td>
+                            {% if item.supplement_price and item.supplement_price > 0 %}
+                            <td class="item-extra">+{{ item.supplement_price }}€</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </span>
+            </div>
+            {% else %}
+            {% if order.meat %}
             <div class="detail-row">
                 <span class="detail-label">Viande</span>
                 <span class="detail-value font-medium">{{ order.meat }}</span>
             </div>
+            {% endif %}
+            {% if order.side %}
             <div class="detail-row">
                 <span class="detail-label">Accompagnement</span>
                 <span class="detail-value">{{ order.side }}</span>
             </div>
+            {% endif %}
             {% if order.vegetable %}
             <div class="detail-row">
                 <span class="detail-label">Légume</span>
                 <span class="detail-value">{{ order.vegetable }}</span>
             </div>
+            {% endif %}
+            {% if order.supplement %}
+            <div class="detail-row">
+                <span class="detail-label">Supplément</span>
+                <span class="detail-value">{{ order.supplement }}
+                    {% if order.supplement_price and order.supplement_price > 0 %}
+                    <span class="text-muted">(+{{ order.supplement_price }}€)</span>
+                    {% endif %}
+                </span>
+            </div>
+            {% endif %}
             {% endif %}
             <div class="detail-row">
                 <span class="detail-label">Prix unitaire</span>
@@ -76,6 +112,9 @@
                     <span class="badge badge-lg {{ order.payment_status|payment_badge_class }}">
                         {{ order.get_payment_status_display }}
                     </span>
+                    {% if order.payment_status == 'attente' and order.change_amount %}
+                    <span class="text-muted ml-xs">Monnaie : {{ order.change_amount }}€</span>
+                    {% endif %}
                 </span>
             </div>
             <div class="detail-row">
@@ -98,10 +137,21 @@
                 <span class="detail-value text-muted">{{ order.prepared_at|date:"d/m/Y H:i" }}</span>
             </div>
             {% endif %}
-            {% if order.retrieved_at %}
+            {% if order.served_at %}
             <div class="detail-row">
-                <span class="detail-label">Récupéré le</span>
-                <span class="detail-value text-muted">{{ order.retrieved_at|date:"d/m/Y H:i" }}</span>
+                <span class="detail-label">Servi le</span>
+                <span class="detail-value text-muted">{{ order.served_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            {% endif %}
+            {% if order.customer_rating %}
+            <div class="detail-row">
+                <span class="detail-label">Avis client</span>
+                <span class="detail-value">
+                    <span class="badge badge-outline">⭐ {{ order.customer_rating }}/10</span>
+                    {% if order.customer_comment %}
+                    <p class="text-muted text-sm mt-xs">"{{ order.customer_comment }}"</p>
+                    {% endif %}
+                </span>
             </div>
             {% endif %}
         </div>
@@ -119,29 +169,81 @@
     </div>
 </div>
 
-<!-- Actions -->
-<div class="detail-actions">
+<!-- Actions paiement -->
+<div class="detail-actions" x-data="{ mode: 'choose' }">
     {% if not order.is_paid %}
-    <form method="post" action="{% url 'mark_paid' order.pk %}"
-          hx-post="{% url 'mark_paid' order.pk %}"
-          hx-target="#order-card-{{ order.pk }}"
-          hx-swap="innerHTML"
-          x-data="{ confirm: false }">
-        {% csrf_token %}
-        <div x-show="!confirm">
-            <button type="button" @click="confirm = true" class="btn btn-primary btn-lg">
-                Encaisser {{ order.total_amount }}€
+    <!-- Mode choix -->
+    <div x-show="mode === 'choose'" class="payment-choice-group">
+        <p class="payment-label">Encaisser <strong>{{ order.total_amount }}€</strong> :</p>
+        <div class="payment-buttons-row">
+            <button type="button" @click="mode = 'exact'" class="btn btn-primary btn-lg">
+                💵 Paiement exact
+            </button>
+            <button type="button" @click="mode = 'change'" class="btn btn-warning btn-lg">
+                🪙 Monnaie à rendre
             </button>
         </div>
-        <div x-show="confirm" x-cloak class="confirm-group">
-            <span class="confirm-text">Confirmer l'encaissement ?</span>
-            <button type="submit" class="btn btn-success btn-lg">Oui, valider</button>
-            <button type="button" @click="confirm = false" class="btn btn-ghost">Annuler</button>
+    </div>
+
+    <!-- Mode paiement exact -->
+    <div x-show="mode === 'exact'" x-cloak>
+        <form method="post" action="{% url 'mark_paid' order.pk %}"
+              hx-post="{% url 'mark_paid' order.pk %}"
+              hx-target="#order-card-{{ order.pk }}"
+              hx-swap="innerHTML">
+            {% csrf_token %}
+            <div class="confirm-group">
+                <span class="confirm-text">Confirmer {{ order.total_amount }}€ payé ?</span>
+                <div class="confirm-actions">
+                    <button type="submit" class="btn btn-success btn-lg">✓ Valider</button>
+                    <button type="button" @click="mode = 'choose'" class="btn btn-ghost">Retour</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Mode monnaie en attente -->
+    <div x-show="mode === 'change'" x-cloak>
+        <form method="post" action="{% url 'mark_payment_pending' order.pk %}"
+              hx-post="{% url 'mark_payment_pending' order.pk %}"
+              hx-target="#order-card-{{ order.pk }}"
+              hx-swap="innerHTML">
+            {% csrf_token %}
+            <div class="change-form">
+                <label class="change-label">Montant de la monnaie à rendre :</label>
+                <div class="change-input-group">
+                    <input type="number" name="change_amount" step="0.50" min="0"
+                           placeholder="Ex : 5.00" required
+                           class="input-field change-input">
+                    <span class="input-suffix">€</span>
+                </div>
+                <div class="confirm-actions mt-sm">
+                    <button type="submit" class="btn btn-warning btn-lg">🪙 Confirmer</button>
+                    <button type="button" @click="mode = 'choose'" class="btn btn-ghost">Retour</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% elif order.payment_status == 'attente' %}
+    <!-- Monnaie en attente de rendu → bouton pour finaliser -->
+    <div class="paid-pending-group">
+        <div class="badge badge-warning badge-xl mb-sm">
+            🪙 Monnaie à rendre : {{ order.change_amount }}€
         </div>
-    </form>
+        <form method="post" action="{% url 'mark_paid' order.pk %}"
+              hx-post="{% url 'mark_paid' order.pk %}"
+              hx-target="#order-card-{{ order.pk }}"
+              hx-swap="innerHTML">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">✓ Monnaie rendue — Marquer payé</button>
+        </form>
+    </div>
+
     {% else %}
     <div class="paid-badge-large">
         <span class="badge badge-success badge-xl">✓ Payé</span>
     </div>
     {% endif %}
 </div>
+

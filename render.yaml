@@ -1,3 +1,17 @@
+# ──────────────────────────────────────────────────────────────
+# Render.yaml — Vente GDJ EEBC
+# ──────────────────────────────────────────────────────────────
+# OPTION A (par défaut) : base PostgreSQL interne Render
+#   → Décommentez la section "databases" ci-dessous
+#   → Utilisez "fromDatabase" pour DATABASE_URL
+#
+# OPTION B : base externe Supabase
+#   → Commentez la section "databases"
+#   → Remplacez DATABASE_URL par la valeur manuelle Supabase
+#   → Format : postgresql://postgres.XXX:password@host:5432/postgres
+# ──────────────────────────────────────────────────────────────
+
+# OPTION A — Base PostgreSQL Render (décommenter pour utiliser)
 databases:
   - name: vente-gdj-eebc-db
     databaseName: vente_gdj_eebc
@@ -8,8 +22,7 @@ services:
     name: vente-gdj-eebc
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
-    preDeployCommand: python manage.py bootstrap_app --excel=liste_resto_eph.xlsx --clear --event-name="Restaurant Éphémère GDJ EEBC" --event-date=2026-03-28
+    buildCommand: ./build.sh
     startCommand: gunicorn config.wsgi:application
     envVars:
       - key: DJANGO_SECRET_KEY
@@ -20,10 +33,14 @@ services:
         value: ".onrender.com"
       - key: CSRF_TRUSTED_ORIGINS
         value: "https://vente-gdj-eebc.onrender.com"
+      # OPTION A — Base Render interne
       - key: DATABASE_URL
         fromDatabase:
           name: vente-gdj-eebc-db
           property: connectionString
+      # OPTION B — Base Supabase externe (remplacer ci-dessus par) :
+      # - key: DATABASE_URL
+      #   value: "postgresql://postgres.XXXXXXXX:PASSWORD@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
       - key: PYTHON_VERSION
         value: "3.13.0"
       - key: DEFAULT_ADMIN_USERNAME

@@ -10,7 +10,7 @@ def prep_badge_class(status):
         'non_lance': 'badge-status-idle',
         'en_preparation': 'badge-status-progress',
         'prepare': 'badge-status-ready',
-        'recupere': 'badge-status-done',
+        'servi': 'badge-status-done',
     }
     return mapping.get(status, 'badge-neutral')
 
@@ -31,7 +31,7 @@ def prep_icon(status):
         'non_lance': '○',
         'en_preparation': '◔',
         'prepare': '●',
-        'recupere': '✓',
+        'servi': '✓',
     }
     return mapping.get(status, '○')
 
@@ -41,7 +41,7 @@ def next_prep_status(status):
     mapping = {
         'non_lance': 'en_preparation',
         'en_preparation': 'prepare',
-        'prepare': 'recupere',
+        'prepare': 'servi',
     }
     return mapping.get(status, '')
 
@@ -51,7 +51,7 @@ def next_prep_label(status):
     mapping = {
         'non_lance': '🚀 Lancer la préparation',
         'en_preparation': '✅ Marquer préparé',
-        'prepare': '📦 Marquer récupéré',
+        'prepare': '🍽 Marquer servi',
     }
     return mapping.get(status, '')
 

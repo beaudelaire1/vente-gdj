@@ -44,9 +44,19 @@
     <div class="ticket-divider"></div>
 
     <div class="ticket-details">
-        <p>{{ order.meat }}</p>
-        <p>{{ order.side }}</p>
+        {% if order.forfait == 'famille' and order.items.exists %}
+        {% for item in order.items.all %}
+        <p>
+            {% if item.person_label %}<em>{{ item.person_label }} :</em> {% endif %}
+            {{ item.dish_summary }}{% if item.supplement_price and item.supplement_price > 0 %} (+{{ item.supplement_price }}€){% endif %}
+        </p>
+        {% endfor %}
+        {% else %}
+        {% if order.meat %}<p>{{ order.meat }}</p>{% endif %}
+        {% if order.side %}<p>{{ order.side }}</p>{% endif %}
         {% if order.vegetable %}<p>{{ order.vegetable }}</p>{% endif %}
+        {% if order.supplement %}<p>Supplément : {{ order.supplement }}{% if order.supplement_price and order.supplement_price > 0 %} (+{{ order.supplement_price }}€){% endif %}</p>{% endif %}
+        {% endif %}
     </div>
 
     <div class="ticket-divider"></div>

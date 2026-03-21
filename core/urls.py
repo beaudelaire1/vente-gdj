@@ -16,6 +16,7 @@ urlpatterns = [
     path('commande/<int:pk>/', views.order_detail, name='order_detail'),
     path('commande/<int:pk>/partial/', views.order_detail_partial, name='order_detail_partial'),
     path('commande/<int:pk>/payer/', views.mark_paid, name='mark_paid'),
+    path('commande/<int:pk>/monnaie/', views.mark_payment_pending, name='mark_payment_pending'),
     path('commande/<int:pk>/ticket/', views.ticket_print_view, name='ticket_print'),
 
     # Préparation
@@ -34,5 +35,6 @@ urlpatterns = [
     # Public / QR
     path('suivi/<uuid:token>/', views.order_public_view, name='order_public'),
     path('suivi/<uuid:token>/status/', views.order_public_status, name='order_public_status'),
+    path('suivi/<uuid:token>/avis/', views.submit_review, name='submit_review'),
     path('qr/<uuid:token>.png', views.qr_code_image, name='qr_code_image'),
 ]

@@ -43,24 +43,59 @@ python manage.py import_excel chemin/vers/fichier.xlsx --event-name "Mon événe
 
 ## Déploiement Render
 
-1. Créer un Web Service + PostgreSQL sur Render
-2. Connecter le repo Git
-3. Variables d'environnement configurées dans `render.yaml`
-4. Après déploiement, ouvrir le Shell Render et injecter les données :
+### 1. Créer le service
+
+- Créer un **Web Service** sur Render et connecter le repo Git
+- **Option A** (simple) : créer aussi un **PostgreSQL** Render (plan Free)
+- **Option B** (Supabase) : créer une base Supabase et copier l'URI de connexion
+  - Utiliser le port **5432** (mode Session, compatible Gunicorn)
+  - Format : `postgresql://postgres.XXXX:PASSWORD@host:5432/postgres`
+
+### 2. Variables d'environnement
+
+Vérifier dans le dashboard Render que ces variables sont bien définies :
+
+| Variable | Valeur |
+|---|---|
+| `DJANGO_SECRET_KEY` | *(auto-générée par render.yaml)* |
+| `DJANGO_DEBUG` | `False` |
+| `DJANGO_ALLOWED_HOSTS` | `.onrender.com` |
+| `CSRF_TRUSTED_ORIGINS` | `https://votre-app.onrender.com` |
+| `DATABASE_URL` | *(auto depuis Render DB ou URI Supabase)* |
+| `PYTHON_VERSION` | `3.13.0` |
+| `DEFAULT_ADMIN_USERNAME` | `admin` |
+| `DEFAULT_ADMIN_PASSWORD` | *(auto-générée ou personnalisée)* |
+| `DEFAULT_CAISSE_USERNAME` | `caisse` |
+| `DEFAULT_CAISSE_PASSWORD` | *(auto-générée ou personnalisée)* |
+| `DEFAULT_PREPARATION_USERNAME` | `preparation` |
+| `DEFAULT_PREPARATION_PASSWORD` | *(auto-générée ou personnalisée)* |
+
+### 3. Premier déploiement
+
+Le `build.sh` exécute automatiquement :
+- `pip install` → dépendances
+- `collectstatic` → fichiers statiques
+- `migrate` → schéma de base de données
+- `setup_users` → comptes admin, caisse, préparation
+
+### 4. Import initial des données
+
+Après le premier déploiement, ouvrir le **Shell Render** et lancer :
 
 ```bash
-python manage.py bootstrap_app --json data_backup.json --clear
+# Depuis un fichier Excel source
+python manage.py bootstrap_app --skip-migrate --skip-users --excel liste_resto_eph.xlsx --clear \
+  --event-name "Restaurant Éphémère GDJ EEBC" --event-date 2026-03-28
+
+# Ou depuis une sauvegarde JSON
+python manage.py bootstrap_app --skip-migrate --skip-users --json data_backup.json --clear
 ```
 
-Ou si vous partez du fichier source Excel :
+> **Attention** : `--clear` efface les données métier. Ne l'utiliser que pour l'import initial ou un reset volontaire.
 
-```bash
-python manage.py bootstrap_app --excel liste_resto_eph.xlsx --clear
-```
+### 5. Redéploiements suivants
 
-À chaque déploiement, Render exécute aussi `python manage.py setup_users` dans le build. Les comptes `admin`, `caisse` et `preparation` sont donc créés ou mis à jour automatiquement depuis les variables d'environnement Render.
-
-## 📊 Backup & Migration
+Les redéploiements relancent `build.sh` qui applique les nouvelles migrations et met à jour les comptes. **Aucune donnée n'est effacée.**
 
 ### Exporter une sauvegarde
 

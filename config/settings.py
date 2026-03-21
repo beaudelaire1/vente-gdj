@@ -78,8 +78,16 @@ DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
         conn_max_age=600,
+        conn_health_checks=True,
     )
 }
+
+# Enforce SSL for PostgreSQL in production
+if not DEBUG:
+    _engine = DATABASES['default'].get('ENGINE', '')
+    if 'postgresql' in _engine or 'postgis' in _engine:
+        DATABASES['default'].setdefault('OPTIONS', {})
+        DATABASES['default']['OPTIONS']['sslmode'] = 'require'
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
