@@ -15,7 +15,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from openpyxl import load_workbook
 from datetime import datetime
-from core.models import Event, Customer, Order, StatusLog, UserProfile
+from core.models import Event, Customer, Order, OrderItem, StatusLog, UserProfile
 
 
 class Command(BaseCommand):
@@ -56,6 +56,7 @@ class Command(BaseCommand):
         """Clear existing data (except users)."""
         self.stdout.write(self.style.WARNING('⚠️  Clearing existing data...'))
         with transaction.atomic():
+            OrderItem.objects.all().delete()
             StatusLog.objects.all().delete()
             Order.objects.all().delete()
             Customer.objects.all().delete()
@@ -167,11 +168,10 @@ class Command(BaseCommand):
                         'side': row[9],
                         'vegetable': row[10] or '',
                         'unit_price': row[11],
-                        'total_price': row[12],
+                        'total_amount': row[12],
                         'payment_status': row[13],
                         'preparation_status': row[14],
                         'started_at': self._parse_datetime(row[15]),
-                        'completed_at': self._parse_datetime(row[16]),
                     }
                 )
                 if created:
@@ -219,18 +219,24 @@ class Command(BaseCommand):
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            
-            with transaction.atomic():
-                if 'events' in data:
+
+            if 'events' in data:
+                with transaction.atomic():
                     self._import_json_events(data['events'])
-                
-                if 'customers' in data:
+
+            if 'customers' in data:
+                with transaction.atomic():
                     self._import_json_customers(data['customers'])
-                
-                if 'orders' in data:
+
+            if 'orders' in data:
+                with transaction.atomic():
                     self._import_json_orders(data['orders'])
-                
-                if 'statuslogs' in data:
+
+            if 'order_items' in data:
+                self._import_json_order_items(data['order_items'])
+
+            if 'statuslogs' in data:
+                with transaction.atomic():
                     self._import_json_statuslogs(data['statuslogs'])
             
             self.stdout.write(
@@ -245,9 +251,8 @@ class Command(BaseCommand):
         for item in events:
             try:
                 event, is_new = Event.objects.get_or_create(
-                    id=item.get('id'),
+                    name=item.get('name'),
                     defaults={
-                        'name': item.get('name'),
                         'date': self._parse_date(item.get('date')),
                         'description': item.get('description', ''),
                         'is_active': item.get('is_active', True),
@@ -257,7 +262,7 @@ class Command(BaseCommand):
                     created += 1
             except Exception as e:
                 self.stdout.write(self.style.WARNING(f'  ⚠️  Event: {str(e)}'))
-        
+
         if created:
             self.stdout.write(f'  ✅ {created} events imported')
 
@@ -267,9 +272,8 @@ class Command(BaseCommand):
         for item in customers:
             try:
                 customer, is_new = Customer.objects.get_or_create(
-                    id=item.get('id'),
+                    name=item.get('name'),
                     defaults={
-                        'name': item.get('name'),
                         'phone': item.get('phone', ''),
                         'email': item.get('email', ''),
                     }
@@ -278,7 +282,7 @@ class Command(BaseCommand):
                     created += 1
             except Exception as e:
                 self.stdout.write(self.style.WARNING(f'  ⚠️  Customer: {str(e)}'))
-        
+
         if created:
             self.stdout.write(f'  ✅ {created} customers imported')
 
@@ -288,37 +292,39 @@ class Command(BaseCommand):
         for item in orders:
             try:
                 event = Event.objects.filter(name=item.get('event')).first()
-                customer = Customer.objects.filter(name=item.get('customer')).first()
-                
+                customer_name = item.get('customer')
+                customer = Customer.objects.filter(name=customer_name).first()
+
                 if not event or not customer:
                     continue
-                
+
+                defaults = {
+                    'customer': customer,
+                    'forfait': item.get('forfait'),
+                    'nb_persons': item.get('nb_persons', 1),
+                    'dining_type': item.get('dining_type'),
+                    'meat': item.get('meat', ''),
+                    'side': item.get('side', ''),
+                    'vegetable': item.get('vegetable', ''),
+                    'unit_price': item.get('unit_price'),
+                    'total_amount': item.get('total_amount', item.get('total_price', 0)),
+                    'payment_status': item.get('payment_status'),
+                    'preparation_status': item.get('preparation_status'),
+                    'started_at': self._parse_datetime(item.get('started_at')),
+                }
+                if item.get('qr_token'):
+                    defaults['qr_token'] = item['qr_token']
+
                 order, is_new = Order.objects.get_or_create(
-                    id=item.get('id'),
-                    defaults={
-                        'event': event,
-                        'customer': customer,
-                        'ticket_number': item.get('ticket_number'),
-                        'qr_token': item.get('qr_token'),
-                        'forfait': item.get('forfait'),
-                        'nb_persons': item.get('nb_persons', 1),
-                        'dining_type': item.get('dining_type'),
-                        'meat': item.get('meat'),
-                        'side': item.get('side'),
-                        'vegetable': item.get('vegetable', ''),
-                        'unit_price': item.get('unit_price'),
-                        'total_price': item.get('total_price'),
-                        'payment_status': item.get('payment_status'),
-                        'preparation_status': item.get('preparation_status'),
-                        'started_at': self._parse_datetime(item.get('started_at')),
-                        'completed_at': self._parse_datetime(item.get('completed_at')),
-                    }
+                    event=event,
+                    ticket_number=item.get('ticket_number'),
+                    defaults=defaults,
                 )
                 if is_new:
                     created += 1
             except Exception as e:
                 self.stdout.write(self.style.WARNING(f'  ⚠️  Order: {str(e)}'))
-        
+
         if created:
             self.stdout.write(f'  ✅ {created} orders imported')
 
@@ -347,6 +353,29 @@ class Command(BaseCommand):
         
         if created:
             self.stdout.write(f'  ✅ {created} status logs imported')
+
+    def _import_json_order_items(self, items):
+        """Import order items from JSON data."""
+        to_create = []
+        for item in items:
+            order = Order.objects.filter(
+                ticket_number=item.get('order_ticket')
+            ).first()
+            if not order:
+                continue
+            to_create.append(OrderItem(
+                order=order,
+                person_label=item.get('person_label', ''),
+                meat=item.get('meat', ''),
+                side=item.get('side', ''),
+                vegetable=item.get('vegetable', ''),
+                supplement=item.get('supplement', ''),
+                supplement_price=item.get('supplement_price', 0),
+                sort_order=item.get('sort_order', 0),
+            ))
+        if to_create:
+            OrderItem.objects.bulk_create(to_create, ignore_conflicts=True)
+            self.stdout.write(f'  ✅ {len(to_create)} order items imported')
 
     def _parse_date(self, value):
         """Parse date string to date object."""

@@ -3,7 +3,7 @@ from pathlib import Path
 from django.core.management import BaseCommand, CommandError, call_command
 from django.db import transaction
 
-from core.models import Customer, Event, Order, StatusLog
+from core.models import Customer, Event, Order, OrderItem, StatusLog
 
 
 class Command(BaseCommand):
@@ -95,6 +95,7 @@ class Command(BaseCommand):
 
     def _clear_business_data(self):
         with transaction.atomic():
+            OrderItem.objects.all().delete()
             StatusLog.objects.all().delete()
             Order.objects.all().delete()
             Customer.objects.all().delete()
