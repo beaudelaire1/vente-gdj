@@ -1,5 +1,5 @@
 {% load order_tags %}
-<div class="prep-card-inner">
+<div class="prep-card-inner" x-data="{ showDetail: false }">
     <div class="prep-card-header">
         <span class="prep-ticket font-mono">#{{ order.ticket_number }}</span>
         <span class="badge {{ order.preparation_status|prep_badge_class }}">
@@ -9,59 +9,13 @@
     <div class="prep-card-body">
         <div class="prep-customer">{{ order.customer.name }}</div>
 
-        {% if order.forfait == 'famille' and order.items.all %}
-        <!-- Forfait famille : détail de chaque plat -->
-        <div class="prep-dish-details">
-            <div class="prep-dish-label">🍽 {{ order.nb_persons }} plats — Famille</div>
-            <div class="prep-items-list">
-                {% for item in order.items.all %}
-                <div class="prep-item">
-                    <span class="prep-item-num">{{ forloop.counter }}.</span>
-                    <span class="prep-item-content">
-                        {% if item.meat %}<span class="prep-item-meat">{{ item.meat }}</span>{% endif %}
-                        {% if item.side %}<span class="prep-item-side">{{ item.side }}</span>{% endif %}
-                        {% if item.vegetable %}<span class="prep-item-veg">{{ item.vegetable }}</span>{% endif %}
-                        {% if item.supplement %}<span class="prep-item-extra">+ {{ item.supplement }}</span>{% endif %}
-                    </span>
-                    {% if item.person_label %}
-                    <span class="prep-item-person">{{ item.person_label }}</span>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% else %}
-        <!-- Individuel ou famille sans items : détail direct -->
-        <div class="prep-dish-details">
-            {% if order.meat %}
-            <div class="prep-dish-line">
-                <span class="prep-dish-type">Viande</span>
-                <span class="prep-dish-value">{{ order.meat }}</span>
-            </div>
+        <!-- Badges forfait + type -->
+        <div class="prep-badges">
+            {% if order.forfait == 'famille' %}
+            <span class="badge badge-famille">👨‍👩‍👧‍👦 Famille — {{ order.nb_persons }} pers.</span>
+            {% else %}
+            <span class="badge badge-outline badge-sm">Individuel</span>
             {% endif %}
-            {% if order.side %}
-            <div class="prep-dish-line">
-                <span class="prep-dish-type">Accomp.</span>
-                <span class="prep-dish-value">{{ order.side }}</span>
-            </div>
-            {% endif %}
-            {% if order.vegetable %}
-            <div class="prep-dish-line">
-                <span class="prep-dish-type">Légume</span>
-                <span class="prep-dish-value">{{ order.vegetable }}</span>
-            </div>
-            {% endif %}
-            {% if order.supplement %}
-            <div class="prep-dish-line">
-                <span class="prep-dish-type">Suppl.</span>
-                <span class="prep-dish-value">{{ order.supplement }}</span>
-            </div>
-            {% endif %}
-        </div>
-        {% endif %}
-
-        <div class="prep-meta">
-            <span>{{ order.nb_persons }} pers.</span>
             <span class="badge badge-outline badge-sm">{{ order.get_dining_type_display }}</span>
             {% if order.is_paid %}
             <span class="badge badge-success badge-sm">💰 Payé</span>
@@ -69,6 +23,107 @@
             <span class="badge badge-danger badge-sm">Non payé</span>
             {% endif %}
         </div>
+
+        <!-- Résumé rapide toujours visible -->
+        <div class="prep-dish-summary">
+            {% if order.meat %}{{ order.meat }}{% endif %}{% if order.side %} + {{ order.side }}{% endif %}{% if order.vegetable %} + {{ order.vegetable }}{% endif %}
+            {% if order.forfait == 'famille' and not order.items.exists %}
+            <span class="prep-qty">× {{ order.nb_persons }}</span>
+            {% endif %}
+        </div>
+
+        <!-- Bouton voir détail -->
+        <button class="btn btn-detail-toggle" @click="showDetail = !showDetail">
+            <span x-text="showDetail ? '▾ Masquer détail' : '▸ Voir détail'"></span>
+        </button>
+
+        <!-- Détail complet (expansible) -->
+        <div class="prep-detail-panel" x-show="showDetail" x-transition>
+            {% if order.forfait == 'famille' and order.items.exists %}
+            <!-- Forfait famille avec items individuels -->
+            <div class="prep-dish-details">
+                <div class="prep-dish-label">🍽 {{ order.nb_persons }} plats détaillés</div>
+                <div class="prep-items-list">
+                    {% for item in order.items.all %}
+                    <div class="prep-item">
+                        <span class="prep-item-num">{{ forloop.counter }}.</span>
+                        <span class="prep-item-content">
+                            {% if item.meat %}<span class="prep-item-meat">{{ item.meat }}</span>{% endif %}
+                            {% if item.side %}<span class="prep-item-side">{{ item.side }}</span>{% endif %}
+                            {% if item.vegetable %}<span class="prep-item-veg">{{ item.vegetable }}</span>{% endif %}
+                            {% if item.supplement %}<span class="prep-item-extra">+ {{ item.supplement }}</span>{% endif %}
+                        </span>
+                        {% if item.person_label %}
+                        <span class="prep-item-person">{{ item.person_label }}</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% elif order.forfait == 'famille' %}
+            <!-- Forfait famille SANS items : même plat pour tous -->
+            <div class="prep-dish-details">
+                <div class="prep-dish-label">🍽 Même plat × {{ order.nb_persons }} personnes</div>
+                {% if order.meat %}
+                <div class="prep-dish-line">
+                    <span class="prep-dish-type">Viande</span>
+                    <span class="prep-dish-value">{{ order.meat }}</span>
+                </div>
+                {% endif %}
+                {% if order.side %}
+                <div class="prep-dish-line">
+                    <span class="prep-dish-type">Accomp.</span>
+                    <span class="prep-dish-value">{{ order.side }}</span>
+                </div>
+                {% endif %}
+                {% if order.vegetable %}
+                <div class="prep-dish-line">
+                    <span class="prep-dish-type">Légume</span>
+                    <span class="prep-dish-value">{{ order.vegetable }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <!-- Individuel -->
+            <div class="prep-dish-details">
+                {% if order.meat %}
+                <div class="prep-dish-line">
+                    <span class="prep-dish-type">Viande</span>
+                    <span class="prep-dish-value">{{ order.meat }}</span>
+                </div>
+                {% endif %}
+                {% if order.side %}
+                <div class="prep-dish-line">
+                    <span class="prep-dish-type">Accomp.</span>
+                    <span class="prep-dish-value">{{ order.side }}</span>
+                </div>
+                {% endif %}
+                {% if order.vegetable %}
+                <div class="prep-dish-line">
+                    <span class="prep-dish-type">Légume</span>
+                    <span class="prep-dish-value">{{ order.vegetable }}</span>
+                </div>
+                {% endif %}
+                {% if order.supplement %}
+                <div class="prep-dish-line">
+                    <span class="prep-dish-type">Suppl.</span>
+                    <span class="prep-dish-value">{{ order.supplement }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Prix -->
+            <div class="prep-price-line">
+                <span>Total</span>
+                <span class="font-bold">{{ order.total_amount }}€</span>
+            </div>
+
+            {% if order.notes %}
+            <div class="prep-notes">📝 {{ order.notes }}</div>
+            {% endif %}
+        </div>
+
         {% if order.started_at and not order.prepared_at %}
         <div class="text-xs text-muted mt-sm">⏱ Lancé il y a {{ order.started_at|time_ago }}</div>
         {% endif %}
