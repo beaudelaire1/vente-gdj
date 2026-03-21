@@ -768,6 +768,108 @@ body {
     margin-bottom: var(--space-sm);
 }
 
+/* ── Prep card dish details ─────────────────────────── */
+.prep-dish-details {
+    margin: 8px 0;
+    padding: 8px 10px;
+    background: rgba(14, 165, 233, 0.04);
+    border-radius: 6px;
+    border-left: 3px solid var(--color-accent, #0ea5e9);
+}
+
+.prep-dish-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-accent, #0ea5e9);
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+}
+
+.prep-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.prep-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.prep-item:last-child {
+    border-bottom: none;
+}
+
+.prep-item-num {
+    font-weight: 700;
+    color: var(--color-accent, #0ea5e9);
+    min-width: 18px;
+    font-size: 0.78rem;
+}
+
+.prep-item-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+    flex: 1;
+}
+
+.prep-item-meat {
+    font-weight: 600;
+    color: var(--color-text-primary, #1e293b);
+}
+
+.prep-item-side {
+    color: var(--color-text-secondary, #64748b);
+}
+
+.prep-item-veg {
+    color: #16a34a;
+    font-style: italic;
+}
+
+.prep-item-extra {
+    color: #f59e0b;
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+.prep-item-person {
+    font-size: 0.72rem;
+    color: var(--color-text-muted, #94a3b8);
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.prep-dish-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 2px 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.prep-dish-type {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted, #94a3b8);
+    font-weight: 500;
+    min-width: 60px;
+}
+
+.prep-dish-value {
+    font-weight: 600;
+    color: var(--color-text-primary, #1e293b);
+    text-align: right;
+}
+
 .prep-meta {
     display: flex;
     gap: var(--space-sm);

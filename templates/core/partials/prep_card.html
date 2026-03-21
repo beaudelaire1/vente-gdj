@@ -8,7 +8,58 @@
     </div>
     <div class="prep-card-body">
         <div class="prep-customer">{{ order.customer.name }}</div>
-        <div class="prep-dish">{{ order.dish_summary }}</div>
+
+        {% if order.forfait == 'famille' and order.items.all %}
+        <!-- Forfait famille : détail de chaque plat -->
+        <div class="prep-dish-details">
+            <div class="prep-dish-label">🍽 {{ order.nb_persons }} plats — Famille</div>
+            <div class="prep-items-list">
+                {% for item in order.items.all %}
+                <div class="prep-item">
+                    <span class="prep-item-num">{{ forloop.counter }}.</span>
+                    <span class="prep-item-content">
+                        {% if item.meat %}<span class="prep-item-meat">{{ item.meat }}</span>{% endif %}
+                        {% if item.side %}<span class="prep-item-side">{{ item.side }}</span>{% endif %}
+                        {% if item.vegetable %}<span class="prep-item-veg">{{ item.vegetable }}</span>{% endif %}
+                        {% if item.supplement %}<span class="prep-item-extra">+ {{ item.supplement }}</span>{% endif %}
+                    </span>
+                    {% if item.person_label %}
+                    <span class="prep-item-person">{{ item.person_label }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <!-- Individuel ou famille sans items : détail direct -->
+        <div class="prep-dish-details">
+            {% if order.meat %}
+            <div class="prep-dish-line">
+                <span class="prep-dish-type">Viande</span>
+                <span class="prep-dish-value">{{ order.meat }}</span>
+            </div>
+            {% endif %}
+            {% if order.side %}
+            <div class="prep-dish-line">
+                <span class="prep-dish-type">Accomp.</span>
+                <span class="prep-dish-value">{{ order.side }}</span>
+            </div>
+            {% endif %}
+            {% if order.vegetable %}
+            <div class="prep-dish-line">
+                <span class="prep-dish-type">Légume</span>
+                <span class="prep-dish-value">{{ order.vegetable }}</span>
+            </div>
+            {% endif %}
+            {% if order.supplement %}
+            <div class="prep-dish-line">
+                <span class="prep-dish-type">Suppl.</span>
+                <span class="prep-dish-value">{{ order.supplement }}</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
         <div class="prep-meta">
             <span>{{ order.nb_persons }} pers.</span>
             <span class="badge badge-outline badge-sm">{{ order.get_dining_type_display }}</span>

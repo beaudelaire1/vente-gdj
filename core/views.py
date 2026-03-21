@@ -282,7 +282,7 @@ def preparation_list(request):
     status_filter = request.GET.get('status', '')
     q = request.GET.get('q', '').strip()
 
-    orders = Order.objects.filter(event=event).select_related('customer')
+    orders = Order.objects.filter(event=event).select_related('customer').prefetch_related('items')
 
     if status_filter:
         orders = orders.filter(preparation_status=status_filter)
