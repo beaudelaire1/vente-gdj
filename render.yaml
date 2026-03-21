@@ -12,10 +12,10 @@
 # ──────────────────────────────────────────────────────────────
 
 # OPTION A — Base PostgreSQL Render (décommenter pour utiliser)
-databases:
-  - name: vente-gdj-eebc-db
-    databaseName: vente_gdj_eebc
-    plan: free
+# databases:
+#   - name: vente-gdj-eebc-db
+#     databaseName: vente_gdj_eebc
+#     plan: free
 
 services:
   - type: web
@@ -33,14 +33,17 @@ services:
         value: ".onrender.com"
       - key: CSRF_TRUSTED_ORIGINS
         value: "https://vente-gdj-eebc.onrender.com"
-      # OPTION A — Base Render interne
-      - key: DATABASE_URL
-        fromDatabase:
-          name: vente-gdj-eebc-db
-          property: connectionString
-      # OPTION B — Base Supabase externe (remplacer ci-dessus par) :
+      # OPTION B — Base Supabase externe
+      # Définir DATABASE_URL manuellement dans le dashboard Render :
+      # Render → Service → Environment → Add Environment Variable
+      # Key: DATABASE_URL
+      # Value: postgresql://postgres.enebfujbqmclbjboqfya:S%213Amz4EC71dWhZE7KVa%5Eg%25zpzM%2A5S@aws-1-sa-east-1.pooler.supabase.com:5432/postgres
+      #
+      # OPTION A — Base Render interne (décommenter pour utiliser) :
       # - key: DATABASE_URL
-      #   value: "postgresql://postgres.XXXXXXXX:PASSWORD@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
+      #   fromDatabase:
+      #     name: vente-gdj-eebc-db
+      #     property: connectionString
       - key: PYTHON_VERSION
         value: "3.13.0"
       - key: DEFAULT_ADMIN_USERNAME
